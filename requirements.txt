@@ -1,0 +1,12 @@
+torch
+huggingface
+boto3
+minio
+loguru
+transformers
+pymilvus
+sqlalchemy
+pandas 
+openpyxl 
+xlrd
+psycopg2-binary
