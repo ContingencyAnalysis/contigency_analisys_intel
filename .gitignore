@@ -221,3 +221,5 @@ __marimo__/
 *.xlsx
 *.xls
 *.csv
+*.parquet
+*.db
