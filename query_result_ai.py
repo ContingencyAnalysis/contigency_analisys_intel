@@ -1,7 +1,10 @@
+# Script que le resultados do Motor Estatístico de dentro do banco de dados SQLite e utiliza um modelo de linguagem para analisar os dados e identificar possíveis irregularidades, 
+# padrões suspeitos ou insights relevantes. O script também pode recuperar documentos relacionados a partir do Milvus usando embeddings e fornecer uma análise detalhada com base nesses documentos.
+
 import os
 import json
 import sqlite3
-from openai import OpenAI
+import boto3
 
 from pymilvus import MilvusClient
 from sentence_transformers import SentenceTransformer
@@ -52,14 +55,19 @@ HF_LLM_MODEL = os.getenv(
     "meta-llama/Meta-Llama-3-8B-Instruct"
 )
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_MODEL = os.getenv(
-    "OPENAI_MODEL",
-    "gpt-5-mini"
+AWS_REGION = os.getenv(
+    "AWS_REGION",
+    "us-east-1"
 )
 
-client = OpenAI(
-    api_key=OPENAI_API_KEY
+BEDROCK_MODEL_ID = os.getenv(
+    "BEDROCK_MODEL_ID",
+    "openai.gpt-oss-20b-1:0"
+)
+
+bedrock = boto3.client(
+    "bedrock-runtime",
+    region_name=AWS_REGION
 )
 
 # =====================================================
@@ -152,18 +160,48 @@ def search_documents(query_text):
 # =====================================================
 
 SYSTEM_PROMPT = """
-Você é um especialista em:
+Você é um analista de auditoria pública especializado em explicar resultados de detecção de anomalias.
 
-- auditoria pública
-- detecção de fraudes
-- análise de emendas parlamentares
+OBJETIVO:
+Explicar exclusivamente os possíveis motivos que levaram o motor estatístico a classificar um registro como suspeito.
 
-Regras:
+REGRAS:
 
-- Utilize apenas os documentos fornecidos.
-- Não invente informações.
-- Cite [Documento X].
-- Se não houver evidência suficiente, informe isso.
+- Não conclua que existe fraude.
+- Não afirme irregularidades sem evidências.
+- Explique apenas indícios, inconsistências ou padrões atípicos.
+- Utilize somente os documentos recuperados.
+- Se os documentos recuperados não forem relacionados diretamente ao caso, informe isso explicitamente.
+- Não faça resumo dos documentos.
+- Não liste informações irrelevantes.
+
+Sua resposta deve conter SOMENTE:
+
+1. Motivos que podem ter contribuído para a classificação de risco.
+2. Evidências observadas na transação.
+3. Evidências encontradas nos documentos recuperados.
+4. Nível de confiança da análise (Alto, Médio ou Baixo).
+
+Formato obrigatório:
+
+MOTIVOS IDENTIFICADOS
+
+• motivo 1
+• motivo 2
+• motivo 3
+
+EVIDÊNCIAS
+
+• evidência 1
+• evidência 2
+
+CONFIANÇA DA ANÁLISE
+
+Baixa/Média/Alta
+
+JUSTIFICATIVA
+
+Texto curto de até 5 linhas.
 """
 
 def build_prompt(transaction, docs):
@@ -182,22 +220,25 @@ def build_prompt(transaction, docs):
     )
 
     return f"""
-Dados analisados:
+TRANSAÇÃO ANALISADA
 
 {transaction_json}
 
-Documentos recuperados:
+DOCUMENTOS RECUPERADOS
 
 {context}
 
-Explique:
+Pergunta:
 
-1. Quais características chamam atenção.
-2. Quais padrões encontrados nos documentos são semelhantes.
-3. Possíveis irregularidades associadas.
-4. Justifique usando apenas os documentos recuperados.
+Explique somente os possíveis motivos que levaram o motor estatístico a considerar esta transação suspeita.
 
-Cite [Documento X].
+Não determine fraude.
+
+Não faça recomendações.
+
+Não descreva todos os documentos.
+
+Mostre apenas os indícios relevantes.
 """
 
 # =====================================================
@@ -206,21 +247,33 @@ Cite [Documento X].
 
 def generate_answer(prompt):
 
-    response = client.responses.create(
-        model=OPENAI_MODEL,
-        input=[
-            {
-                "role": "system",
-                "content": SYSTEM_PROMPT
-            },
+    full_prompt = f"""
+        {SYSTEM_PROMPT}
+
+        {prompt}
+        """
+
+    body = {
+        "messages": [
             {
                 "role": "user",
-                "content": prompt
+                "content": full_prompt
             }
-        ]
+        ],
+        "max_tokens": 1000,
+        "temperature": 0.2
+    }
+
+    response = bedrock.invoke_model(
+        modelId=BEDROCK_MODEL_ID,
+        body=json.dumps(body)
     )
 
-    return response.output_text
+    result = json.loads(
+        response["body"].read()
+    )
+
+    return result["choices"][0]["message"]["content"]
 
 # =====================================================
 # MAIN
