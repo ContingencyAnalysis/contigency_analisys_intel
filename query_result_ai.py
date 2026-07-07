@@ -5,6 +5,7 @@ import os
 import json
 import sqlite3
 import boto3
+import re
 
 from pymilvus import MilvusClient
 from sentence_transformers import SentenceTransformer
@@ -21,7 +22,7 @@ SQLITE_DB_PATH = os.getenv(
 SQLITE_TABLE = os.getenv(
     "SQLITE_TABLE",
     "EmendasParlamentares"
-)
+) 
 
 MILVUS_URI = os.getenv(
     "MILVUS_URI",
@@ -96,7 +97,94 @@ def load_transaction():
     if row is None:
         raise Exception("Nenhuma transação encontrada")
 
-    return dict(row)
+    data = dict(row)
+
+    emenda_key = data.get("codigo_da_emenda")
+
+    if not emenda_key:
+        raise Exception(
+            "Transação sem 'codigo_da_emenda' — não é possível referenciar a emenda"
+        )
+
+    return emenda_key, data
+
+def init_result_table(conn):
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        f"""
+        CREATE INDEX IF NOT EXISTS idx_emendas_codigo
+        ON {SQLITE_TABLE} (codigo_da_emenda)
+        """
+    )
+
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS AnaliseResultados (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            emenda_id TEXT NOT NULL,
+            criado_em TEXT DEFAULT CURRENT_TIMESTAMP,
+            nivel_anomalia TEXT NOT NULL DEFAULT 'INDEFINIDO',
+            documents_json TEXT NOT NULL,
+            analysis TEXT NOT NULL,
+            resultado_completo TEXT NOT NULL
+        )
+        """
+    )
+
+    cursor.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_analise_emenda_id
+        ON AnaliseResultados (emenda_id)
+        """
+    )
+
+    cursor.execute(
+        """
+        CREATE INDEX IF NOT EXISTS idx_analise_nivel_anomalia
+        ON AnaliseResultados (nivel_anomalia)
+        """
+    )
+
+    conn.commit()
+
+
+def save_result_to_sqlite(emenda_id, result):
+
+    conn = sqlite3.connect(SQLITE_DB_PATH)
+
+    init_result_table(conn)
+
+    cursor = conn.cursor()
+
+    nivel_anomalia = extract_nivel_anomalia(result["analysis"])
+
+    cursor.execute(
+        """
+        INSERT INTO AnaliseResultados (
+            emenda_id,
+            nivel_anomalia,
+            documents_json,
+            analysis,
+            resultado_completo
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            emenda_id,
+            nivel_anomalia,
+            json.dumps(result["documents"], ensure_ascii=False),
+            result["analysis"],
+            json.dumps(result, ensure_ascii=False),
+        )
+    )
+
+    conn.commit()
+    inserted_id = cursor.lastrowid
+    conn.close()
+
+    return inserted_id
 
 # =====================================================
 # HUGGINGFACE EMBEDDING
@@ -163,7 +251,7 @@ SYSTEM_PROMPT = """
 Você é um analista de auditoria pública especializado em explicar resultados de detecção de anomalias.
 
 OBJETIVO:
-Explicar exclusivamente os possíveis motivos que levaram o motor estatístico a classificar um registro como suspeito.
+Explicar exclusivamente os possíveis motivos que levaram o motor estatístico a classificar um registro como suspeito, e classificar o nível de severidade dessa anomalia.
 
 REGRAS:
 
@@ -174,26 +262,35 @@ REGRAS:
 - Se os documentos recuperados não forem relacionados diretamente ao caso, informe isso explicitamente.
 - Não faça resumo dos documentos.
 - Não liste informações irrelevantes.
+- Classifique o NÍVEL DA ANOMALIA como BAIXO, MÉDIO ou CRÍTICO, considerando:
+  * BAIXO: inconsistências pontuais, sem indícios de padrão de irregularidade ou valores discrepantes relevantes.
+  * MÉDIO: inconsistências relevantes e/ou repetição de padrões atípicos, mas sem evidência direta de fraude/desvio.
+  * CRÍTICO: múltiplas inconsistências graves, valores muito discrepantes, ou forte similaridade com padrões de fraude/desvio observados nos documentos recuperados.
 
 Sua resposta deve conter SOMENTE:
 
 1. Motivos que podem ter contribuído para a classificação de risco.
 2. Evidências observadas na transação.
 3. Evidências encontradas nos documentos recuperados.
-4. Nível de confiança da análise (Alto, Médio ou Baixo).
+4. Nível da anomalia (Baixo, Médio ou Crítico).
+5. Nível de confiança da análise (Alto, Médio ou Baixo).
 
 Formato obrigatório:
 
 MOTIVOS IDENTIFICADOS
 
-• motivo 1
-• motivo 2
-• motivo 3
+- motivo 1
+- motivo 2
+- motivo 3
 
 EVIDÊNCIAS
 
-• evidência 1
-• evidência 2
+- evidência 1
+- evidência 2
+
+NÍVEL DA ANOMALIA
+
+Baixo/Médio/Crítico
 
 CONFIANÇA DA ANÁLISE
 
@@ -275,6 +372,32 @@ def generate_answer(prompt):
 
     return result["choices"][0]["message"]["content"]
 
+def extract_nivel_anomalia(answer: str) -> str:
+    """
+    Extrai o nível da anomalia (BAIXO/MÉDIO/CRÍTICO) do texto gerado pela IA.
+    Retorna em caixa alta e sem acento, ou 'INDEFINIDO' se não encontrar.
+    """
+
+    match = re.search(
+        r"NÍVEL DA ANOMALIA\s*\n+\s*(Baixo|Médio|Medio|Crítico|Critico)",
+        answer,
+        re.IGNORECASE
+    )
+
+    if not match:
+        return "INDEFINIDO"
+
+    nivel = match.group(1).upper()
+
+    # normaliza acentuação
+    nivel = (
+        nivel
+        .replace("É", "E")
+        .replace("Í", "I")
+    )
+
+    return nivel
+
 # =====================================================
 # MAIN
 # =====================================================
@@ -286,7 +409,7 @@ def run():
     print("=" * 60)
 
     print("\n[1] Carregando transação...")
-    transaction = load_transaction()
+    emenda_id, transaction = load_transaction()
 
     query_text = (
         "fraude auditoria irregularidade "
@@ -327,7 +450,7 @@ def run():
     print(answer)
     print("=" * 60)
 
-    return {
+    return emenda_id, {
         "transaction": transaction,
         "documents": docs,
         "analysis": answer
@@ -339,21 +462,11 @@ def run():
 
 if __name__ == "__main__":
 
-    result = run()
+    emenda_id, result = run()
 
-    with open(
-        "fraud_analysis_result.json",
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        json.dump(
-            result,
-            f,
-            ensure_ascii=False,
-            indent=2
-        )
+    inserted_id = save_result_to_sqlite(emenda_id, result)
 
     print(
-        "\nResultado salvo em fraud_analysis_result.json"
+        f"\nResultado salvo em AnaliseResultados (id={inserted_id}, "
+        f"emenda_id={emenda_id}) no banco {SQLITE_DB_PATH}"
     )
