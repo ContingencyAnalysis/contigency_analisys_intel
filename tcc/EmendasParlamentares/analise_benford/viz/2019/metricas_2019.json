@@ -1,0 +1,82 @@
+{
+  "ano": 2019,
+  "funcoes": {
+    "Desporto e lazer": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 435
+    },
+    "Cultura": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 170
+    },
+    "Segurança pública": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 203
+    },
+    "Comércio e serviços": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 241
+    },
+    "Saúde": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 4030
+    },
+    "Urbanismo": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 1011
+    },
+    "Agricultura": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 500
+    },
+    "Educação": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 817
+    },
+    "Direitos da cidadania": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 234
+    },
+    "Assistência social": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 278
+    },
+    "Defesa nacional": {
+      "mad_1d_flag": "alerta",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 308
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "ano": 2026,
+  "funcoes": {
+    "Saúde": {
+      "mad_1d_flag": "conforme",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 1545
+    },
+    "Agricultura": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 117
+    },
+    "Defesa nacional": {
+      "mad_1d_flag": "conforme",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 111
+    }
+  }
+}

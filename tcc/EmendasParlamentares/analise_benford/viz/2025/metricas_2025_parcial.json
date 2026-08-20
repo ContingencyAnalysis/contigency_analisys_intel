@@ -1,0 +1,155 @@
+{
+  "ano": 2025,
+  "funcoes": {
+    "Comunicações": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Encargos especiais": {
+      "elegivel": false,
+      "motivo": "< 3 ordens de magnitude"
+    },
+    "Gestão ambiental": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Desporto e lazer": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 294
+    },
+    "Cultura": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "conforme",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 241
+    },
+    "Organização agrária": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 120
+    },
+    "Essencial à justiça": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Trabalho": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Saneamento": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Indústria": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Segurança pública": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 279
+    },
+    "Comércio e serviços": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Transporte": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Saúde": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "alerta",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 2179
+    },
+    "Urbanismo": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "conforme",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 172
+    },
+    "Administração": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Agricultura": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "conforme",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 196
+    },
+    "Ciência e Tecnologia": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Direitos da cidadania": {
+      "elegivel": false,
+      "motivo": "< 3 ordens de magnitude"
+    },
+    "Educação": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 585
+    },
+    "Assistência social": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "alerta",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 478
+    },
+    "Defesa nacional": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 311
+    },
+    "Relações exteriores": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Previdência social": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Energia": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    }
+  }
+}

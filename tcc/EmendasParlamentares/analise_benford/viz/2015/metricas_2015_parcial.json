@@ -1,0 +1,101 @@
+{
+  "ano": 2015,
+  "funcoes": {
+    "Gestão ambiental": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Desporto e lazer": {
+      "elegivel": false,
+      "motivo": "< 3 ordens de magnitude"
+    },
+    "Organização agrária": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Cultura": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Trabalho": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Saneamento": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Indústria": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Segurança pública": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Comércio e serviços": {
+      "elegivel": false,
+      "motivo": "< 3 ordens de magnitude"
+    },
+    "Saúde": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "alerta",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 1633
+    },
+    "Habitação": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Urbanismo": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 686
+    },
+    "Administração": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Agricultura": {
+      "elegivel": false,
+      "motivo": "< 3 ordens de magnitude"
+    },
+    "Ciência e Tecnologia": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Direitos da cidadania": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Educação": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "alerta",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 225
+    },
+    "Assistência social": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Defesa nacional": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 145
+    }
+  }
+}

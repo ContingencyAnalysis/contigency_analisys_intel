@@ -1,0 +1,100 @@
+{
+  "ano": 2026,
+  "funcoes": {
+    "Comunicações": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Encargos especiais": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Relações exteriores": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Gestão ambiental": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Desporto e lazer": {
+      "elegivel": false,
+      "motivo": "< 3 ordens de magnitude"
+    },
+    "Organização agrária": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Cultura": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Essencial à justiça": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Indústria": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Segurança pública": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Comércio e serviços": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Saúde": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "conforme",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 1545
+    },
+    "Urbanismo": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Administração": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Agricultura": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 117
+    },
+    "Ciência e Tecnologia": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Direitos da cidadania": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Educação": {
+      "elegivel": false,
+      "motivo": "N insuficiente"
+    },
+    "Assistência social": {
+      "elegivel": false,
+      "motivo": "< 3 ordens de magnitude"
+    },
+    "Defesa nacional": {
+      "elegivel": true,
+      "motivo": "OK",
+      "mad_1d_flag": "conforme",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 111
+    }
+  }
+}

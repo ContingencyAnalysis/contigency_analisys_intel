@@ -1,0 +1,1828 @@
+{
+  "ano": 2026,
+  "eligibility_global": {
+    "total_raw": 2313912,
+    "total_valid": 2250207,
+    "pct_descartado": 0.0275,
+    "ordens": 13.6,
+    "decisao": "eleg?vel",
+    "motivo": "OK"
+  },
+  "orgaos": {
+    "Ministério dos Direitos Humanos e Cidadania": {
+      "eligibility": {
+        "total_raw": 2097,
+        "total_valid": 2097,
+        "pct_descartado": 0.0,
+        "ordens": 6.89,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 2097,
+      "MAD_1d": {
+        "value": 0.024147,
+        "threshold": 0.019516,
+        "flag": "cr?tico",
+        "n": 2097
+      },
+      "JS_1d": {
+        "value": 0.014321,
+        "threshold": 0.018955,
+        "flag": "conforme",
+        "n": 2097
+      },
+      "MAD_2d": {
+        "value": 0.005239,
+        "threshold": 0.001563,
+        "flag": "cr?tico",
+        "n": 2003,
+        "pct_descartado_filtro_10": 0.0448
+      },
+      "JS_2d": {
+        "value": 0.069753,
+        "threshold": 0.088042,
+        "flag": "conforme",
+        "n": 2003
+      },
+      "Last": {
+        "value": 0.3815,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 525.2175,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3815,
+        "n": 2097
+      },
+      "zscore": {
+        "digito_anomalo": "2",
+        "zscore": 9.1866,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "2",
+        "p_obs": 0.2527,
+        "p_esp": 0.1761,
+        "sentido": "excesso"
+      }
+    },
+    "Advocacia-Geral da União": {
+      "eligibility": {
+        "total_raw": 14927,
+        "total_valid": 14927,
+        "pct_descartado": 0.0,
+        "ordens": 9.36,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 14927,
+      "MAD_1d": {
+        "value": 0.005881,
+        "threshold": 0.018594,
+        "flag": "conforme",
+        "n": 14927
+      },
+      "JS_1d": {
+        "value": 0.000748,
+        "threshold": 0.001165,
+        "flag": "conforme",
+        "n": 14927
+      },
+      "MAD_2d": {
+        "value": 0.001551,
+        "threshold": 0.001488,
+        "flag": "cr?tico",
+        "n": 14738,
+        "pct_descartado_filtro_10": 0.0127
+      },
+      "JS_2d": {
+        "value": 0.006754,
+        "threshold": 0.008847,
+        "flag": "conforme",
+        "n": 14738
+      },
+      "Last": {
+        "value": 0.2296,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 151.4357,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2296,
+        "n": 14927
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério das Cidades": {
+      "eligibility": {
+        "total_raw": 11698,
+        "total_valid": 11698,
+        "pct_descartado": 0.0,
+        "ordens": 11.53,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 11698,
+      "MAD_1d": {
+        "value": 0.004727,
+        "threshold": 0.018687,
+        "flag": "conforme",
+        "n": 11698
+      },
+      "JS_1d": {
+        "value": 0.000551,
+        "threshold": 0.00104,
+        "flag": "conforme",
+        "n": 11698
+      },
+      "MAD_2d": {
+        "value": 0.001461,
+        "threshold": 0.001495,
+        "flag": "alerta",
+        "n": 11550,
+        "pct_descartado_filtro_10": 0.0127
+      },
+      "JS_2d": {
+        "value": 0.005675,
+        "threshold": 0.008153,
+        "flag": "conforme",
+        "n": 11550
+      },
+      "Last": {
+        "value": 0.263,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 486.6897,
+        "p_valor": 0.0,
+        "conc_0_5": 0.263,
+        "n": 11698
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério da Agricultura e Pecuária": {
+      "eligibility": {
+        "total_raw": 39609,
+        "total_valid": 39609,
+        "pct_descartado": 0.0,
+        "ordens": 10.26,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 39609,
+      "MAD_1d": {
+        "value": 0.007802,
+        "threshold": 0.018262,
+        "flag": "conforme",
+        "n": 39609
+      },
+      "JS_1d": {
+        "value": 0.00109,
+        "threshold": 0.00137,
+        "flag": "conforme",
+        "n": 39609
+      },
+      "MAD_2d": {
+        "value": 0.002296,
+        "threshold": 0.001464,
+        "flag": "cr?tico",
+        "n": 35416,
+        "pct_descartado_filtro_10": 0.1059
+      },
+      "JS_2d": {
+        "value": 0.017174,
+        "threshold": 0.018639,
+        "flag": "alerta",
+        "n": 35416
+      },
+      "Last": {
+        "value": 0.2477,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 1436.2167,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2477,
+        "n": 39609
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério da Cultura": {
+      "eligibility": {
+        "total_raw": 21299,
+        "total_valid": 21299,
+        "pct_descartado": 0.0,
+        "ordens": 10.3,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 21299,
+      "MAD_1d": {
+        "value": 0.005541,
+        "threshold": 0.018466,
+        "flag": "conforme",
+        "n": 21299
+      },
+      "JS_1d": {
+        "value": 0.000781,
+        "threshold": 0.001129,
+        "flag": "conforme",
+        "n": 21299
+      },
+      "MAD_2d": {
+        "value": 0.0017,
+        "threshold": 0.001479,
+        "flag": "cr?tico",
+        "n": 20082,
+        "pct_descartado_filtro_10": 0.0571
+      },
+      "JS_2d": {
+        "value": 0.006989,
+        "threshold": 0.008646,
+        "flag": "alerta",
+        "n": 20082
+      },
+      "Last": {
+        "value": 0.254,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 723.9311,
+        "p_valor": 0.0,
+        "conc_0_5": 0.254,
+        "n": 21299
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério das Comunicações": {
+      "eligibility": {
+        "total_raw": 7271,
+        "total_valid": 7271,
+        "pct_descartado": 0.0,
+        "ordens": 8.93,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 7271,
+      "MAD_1d": {
+        "value": 0.006683,
+        "threshold": 0.018884,
+        "flag": "conforme",
+        "n": 7271
+      },
+      "JS_1d": {
+        "value": 0.000885,
+        "threshold": 0.001672,
+        "flag": "conforme",
+        "n": 7271
+      },
+      "MAD_2d": {
+        "value": 0.001947,
+        "threshold": 0.001513,
+        "flag": "cr?tico",
+        "n": 6870,
+        "pct_descartado_filtro_10": 0.0552
+      },
+      "JS_2d": {
+        "value": 0.010136,
+        "threshold": 0.014472,
+        "flag": "conforme",
+        "n": 6870
+      },
+      "Last": {
+        "value": 0.2122,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 66.5973,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2122,
+        "n": 7271
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério dos Transportes": {
+      "eligibility": {
+        "total_raw": 53864,
+        "total_valid": 53864,
+        "pct_descartado": 0.0,
+        "ordens": 10.52,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 53864,
+      "MAD_1d": {
+        "value": 0.002928,
+        "threshold": 0.01817,
+        "flag": "conforme",
+        "n": 53864
+      },
+      "JS_1d": {
+        "value": 0.000153,
+        "threshold": 0.00026,
+        "flag": "conforme",
+        "n": 53864
+      },
+      "MAD_2d": {
+        "value": 0.001597,
+        "threshold": 0.001455,
+        "flag": "cr?tico",
+        "n": 51089,
+        "pct_descartado_filtro_10": 0.0515
+      },
+      "JS_2d": {
+        "value": 0.006765,
+        "threshold": 0.007607,
+        "flag": "alerta",
+        "n": 51089
+      },
+      "Last": {
+        "value": 0.225,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 462.4722,
+        "p_valor": 0.0,
+        "conc_0_5": 0.225,
+        "n": 53864
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério do Desenvolvimento e Assistência": {
+      "eligibility": {
+        "total_raw": 9713,
+        "total_valid": 9713,
+        "pct_descartado": 0.0,
+        "ordens": 12.12,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 9713,
+      "MAD_1d": {
+        "value": 0.019441,
+        "threshold": 0.018762,
+        "flag": "cr?tico",
+        "n": 9713
+      },
+      "JS_1d": {
+        "value": 0.007185,
+        "threshold": 0.00858,
+        "flag": "alerta",
+        "n": 9713
+      },
+      "MAD_2d": {
+        "value": 0.003863,
+        "threshold": 0.001501,
+        "flag": "cr?tico",
+        "n": 9586,
+        "pct_descartado_filtro_10": 0.0131
+      },
+      "JS_2d": {
+        "value": 0.036235,
+        "threshold": 0.040789,
+        "flag": "alerta",
+        "n": 9586
+      },
+      "Last": {
+        "value": 0.3872,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 4096.6747,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3872,
+        "n": 9713
+      },
+      "zscore": {
+        "digito_anomalo": "1",
+        "zscore": 12.9756,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "1",
+        "p_obs": 0.3615,
+        "p_esp": 0.301,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério de Portos e Aeroportos": {
+      "eligibility": {
+        "total_raw": 6124,
+        "total_valid": 6124,
+        "pct_descartado": 0.0,
+        "ordens": 9.47,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 6124,
+      "MAD_1d": {
+        "value": 0.021224,
+        "threshold": 0.018961,
+        "flag": "cr?tico",
+        "n": 6124
+      },
+      "JS_1d": {
+        "value": 0.008678,
+        "threshold": 0.010653,
+        "flag": "alerta",
+        "n": 6124
+      },
+      "MAD_2d": {
+        "value": 0.003763,
+        "threshold": 0.001518,
+        "flag": "cr?tico",
+        "n": 5876,
+        "pct_descartado_filtro_10": 0.0405
+      },
+      "JS_2d": {
+        "value": 0.036825,
+        "threshold": 0.043295,
+        "flag": "alerta",
+        "n": 5876
+      },
+      "Last": {
+        "value": 0.2204,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 66.5519,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2204,
+        "n": 6124
+      },
+      "zscore": {
+        "digito_anomalo": "9",
+        "zscore": 10.3521,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "9",
+        "p_obs": 0.0735,
+        "p_esp": 0.0458,
+        "sentido": "excesso"
+      }
+    },
+    "Presidência da República": {
+      "eligibility": {
+        "total_raw": 18467,
+        "total_valid": 18467,
+        "pct_descartado": 0.0,
+        "ordens": 9.35,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 18467,
+      "MAD_1d": {
+        "value": 0.020773,
+        "threshold": 0.018516,
+        "flag": "cr?tico",
+        "n": 18467
+      },
+      "JS_1d": {
+        "value": 0.007095,
+        "threshold": 0.008078,
+        "flag": "alerta",
+        "n": 18467
+      },
+      "MAD_2d": {
+        "value": 0.004333,
+        "threshold": 0.001482,
+        "flag": "cr?tico",
+        "n": 18240,
+        "pct_descartado_filtro_10": 0.0123
+      },
+      "JS_2d": {
+        "value": 0.042518,
+        "threshold": 0.045541,
+        "flag": "alerta",
+        "n": 18240
+      },
+      "Last": {
+        "value": 0.4087,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 8074.7756,
+        "p_valor": 0.0,
+        "conc_0_5": 0.4087,
+        "n": 18467
+      },
+      "zscore": {
+        "digito_anomalo": "1",
+        "zscore": 20.2836,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "1",
+        "p_obs": 0.3695,
+        "p_esp": 0.301,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério da Defesa": {
+      "eligibility": {
+        "total_raw": 503251,
+        "total_valid": 503251,
+        "pct_descartado": 0.0,
+        "ordens": 11.23,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 503251,
+      "MAD_1d": {
+        "value": 0.00266,
+        "threshold": 0.017631,
+        "flag": "conforme",
+        "n": 503251
+      },
+      "JS_1d": {
+        "value": 0.000168,
+        "threshold": 0.0002,
+        "flag": "alerta",
+        "n": 503251
+      },
+      "MAD_2d": {
+        "value": 0.000588,
+        "threshold": 0.001412,
+        "flag": "conforme",
+        "n": 466250,
+        "pct_descartado_filtro_10": 0.0735
+      },
+      "JS_2d": {
+        "value": 0.001011,
+        "threshold": 0.001113,
+        "flag": "alerta",
+        "n": 466250
+      },
+      "Last": {
+        "value": 0.2436,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 11606.8934,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2436,
+        "n": 503251
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério do Desenvolvimento, Indústria, C": {
+      "eligibility": {
+        "total_raw": 5393,
+        "total_valid": 5393,
+        "pct_descartado": 0.0,
+        "ordens": 9.4,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 5393,
+      "MAD_1d": {
+        "value": 0.018736,
+        "threshold": 0.019019,
+        "flag": "alerta",
+        "n": 5393
+      },
+      "JS_1d": {
+        "value": 0.005786,
+        "threshold": 0.007559,
+        "flag": "conforme",
+        "n": 5393
+      },
+      "MAD_2d": {
+        "value": 0.002968,
+        "threshold": 0.001523,
+        "flag": "cr?tico",
+        "n": 5219,
+        "pct_descartado_filtro_10": 0.0323
+      },
+      "JS_2d": {
+        "value": 0.02365,
+        "threshold": 0.029991,
+        "flag": "conforme",
+        "n": 5219
+      },
+      "Last": {
+        "value": 0.2537,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 339.544,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2537,
+        "n": 5393
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério de Minas e Energia": {
+      "eligibility": {
+        "total_raw": 21703,
+        "total_valid": 21703,
+        "pct_descartado": 0.0,
+        "ordens": 11.49,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 21703,
+      "MAD_1d": {
+        "value": 0.004819,
+        "threshold": 0.018459,
+        "flag": "conforme",
+        "n": 21703
+      },
+      "JS_1d": {
+        "value": 0.000431,
+        "threshold": 0.000732,
+        "flag": "conforme",
+        "n": 21703
+      },
+      "MAD_2d": {
+        "value": 0.001292,
+        "threshold": 0.001479,
+        "flag": "alerta",
+        "n": 20298,
+        "pct_descartado_filtro_10": 0.0647
+      },
+      "JS_2d": {
+        "value": 0.003688,
+        "threshold": 0.005143,
+        "flag": "conforme",
+        "n": 20298
+      },
+      "Last": {
+        "value": 0.2482,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 505.3394,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2482,
+        "n": 21703
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério da Fazenda": {
+      "eligibility": {
+        "total_raw": 73419,
+        "total_valid": 73419,
+        "pct_descartado": 0.0,
+        "ordens": 13.6,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 73419,
+      "MAD_1d": {
+        "value": 0.007144,
+        "threshold": 0.018083,
+        "flag": "conforme",
+        "n": 73419
+      },
+      "JS_1d": {
+        "value": 0.001016,
+        "threshold": 0.001204,
+        "flag": "alerta",
+        "n": 73419
+      },
+      "MAD_2d": {
+        "value": 0.00182,
+        "threshold": 0.001448,
+        "flag": "cr?tico",
+        "n": 69028,
+        "pct_descartado_filtro_10": 0.0598
+      },
+      "JS_2d": {
+        "value": 0.008444,
+        "threshold": 0.009156,
+        "flag": "alerta",
+        "n": 69028
+      },
+      "Last": {
+        "value": 0.232,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 1051.0022,
+        "p_valor": 0.0,
+        "conc_0_5": 0.232,
+        "n": 73419
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério da Saúde": {
+      "eligibility": {
+        "total_raw": 132990,
+        "total_valid": 132990,
+        "pct_descartado": 0.0,
+        "ordens": 10.97,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 132990,
+      "MAD_1d": {
+        "value": 0.002328,
+        "threshold": 0.017928,
+        "flag": "conforme",
+        "n": 132990
+      },
+      "JS_1d": {
+        "value": 0.000105,
+        "threshold": 0.000162,
+        "flag": "conforme",
+        "n": 132990
+      },
+      "MAD_2d": {
+        "value": 0.00093,
+        "threshold": 0.001436,
+        "flag": "conforme",
+        "n": 124233,
+        "pct_descartado_filtro_10": 0.0658
+      },
+      "JS_2d": {
+        "value": 0.00242,
+        "threshold": 0.002745,
+        "flag": "alerta",
+        "n": 124233
+      },
+      "Last": {
+        "value": 0.2709,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 7333.4556,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2709,
+        "n": 132990
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério da Integração e do Desenvolvime": {
+      "eligibility": {
+        "total_raw": 21470,
+        "total_valid": 21470,
+        "pct_descartado": 0.0,
+        "ordens": 11.13,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 21470,
+      "MAD_1d": {
+        "value": 0.004069,
+        "threshold": 0.018463,
+        "flag": "conforme",
+        "n": 21470
+      },
+      "JS_1d": {
+        "value": 0.000342,
+        "threshold": 0.000607,
+        "flag": "conforme",
+        "n": 21470
+      },
+      "MAD_2d": {
+        "value": 0.001391,
+        "threshold": 0.001478,
+        "flag": "alerta",
+        "n": 20373,
+        "pct_descartado_filtro_10": 0.0511
+      },
+      "JS_2d": {
+        "value": 0.006086,
+        "threshold": 0.007666,
+        "flag": "conforme",
+        "n": 20373
+      },
+      "Last": {
+        "value": 0.2495,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 431.0433,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2495,
+        "n": 21470
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério da Justiça e Segurança Pública": {
+      "eligibility": {
+        "total_raw": 169798,
+        "total_valid": 169798,
+        "pct_descartado": 0.0,
+        "ordens": 10.45,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 169798,
+      "MAD_1d": {
+        "value": 0.022513,
+        "threshold": 0.017868,
+        "flag": "cr?tico",
+        "n": 169798
+      },
+      "JS_1d": {
+        "value": 0.013941,
+        "threshold": 0.01436,
+        "flag": "alerta",
+        "n": 169798
+      },
+      "MAD_2d": {
+        "value": 0.005539,
+        "threshold": 0.001432,
+        "flag": "cr?tico",
+        "n": 151796,
+        "pct_descartado_filtro_10": 0.106
+      },
+      "JS_2d": {
+        "value": 0.070714,
+        "threshold": 0.07179,
+        "flag": "alerta",
+        "n": 151796
+      },
+      "Last": {
+        "value": 0.3333,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 32472.1388,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3333,
+        "n": 169798
+      },
+      "zscore": {
+        "digito_anomalo": "5",
+        "zscore": 107.1633,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "5",
+        "p_obs": 0.1494,
+        "p_esp": 0.0792,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério do Esporte": {
+      "eligibility": {
+        "total_raw": 2734,
+        "total_valid": 2734,
+        "pct_descartado": 0.0,
+        "ordens": 7.93,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 2734,
+      "MAD_1d": {
+        "value": 0.027721,
+        "threshold": 0.019365,
+        "flag": "cr?tico",
+        "n": 2734
+      },
+      "JS_1d": {
+        "value": 0.013826,
+        "threshold": 0.017849,
+        "flag": "conforme",
+        "n": 2734
+      },
+      "MAD_2d": {
+        "value": 0.007282,
+        "threshold": 0.001551,
+        "flag": "cr?tico",
+        "n": 2632,
+        "pct_descartado_filtro_10": 0.0373
+      },
+      "JS_2d": {
+        "value": 0.112697,
+        "threshold": 0.129571,
+        "flag": "alerta",
+        "n": 2632
+      },
+      "Last": {
+        "value": 0.444,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 2358.7432,
+        "p_valor": 0.0,
+        "conc_0_5": 0.444,
+        "n": 2734
+      },
+      "zscore": {
+        "digito_anomalo": "1",
+        "zscore": 8.609,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "1",
+        "p_obs": 0.3767,
+        "p_esp": 0.301,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério do Empreendedorismo, da Microempr": {
+      "eligibility": {
+        "total_raw": 466,
+        "total_valid": 466,
+        "pct_descartado": 0.0,
+        "ordens": 6.66,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 466,
+      "MAD_1d": {
+        "value": 0.026401,
+        "threshold": 0.020621,
+        "flag": "cr?tico",
+        "n": 466
+      },
+      "JS_1d": {
+        "value": 0.012835,
+        "threshold": 0.024639,
+        "flag": "conforme",
+        "n": 466
+      },
+      "MAD_2d": {
+        "value": 0.006384,
+        "threshold": 0.001653,
+        "flag": "cr?tico",
+        "n": 444,
+        "pct_descartado_filtro_10": 0.0472
+      },
+      "JS_2d": {
+        "value": 0.12169,
+        "threshold": 0.181269,
+        "flag": "conforme",
+        "n": 444
+      },
+      "Last": {
+        "value": 0.3584,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 93.6996,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3584,
+        "n": 466
+      },
+      "zscore": {
+        "digito_anomalo": "6",
+        "zscore": 2.8363,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "6",
+        "p_obs": 0.1009,
+        "p_esp": 0.0669,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério do Turismo": {
+      "eligibility": {
+        "total_raw": 1595,
+        "total_valid": 1595,
+        "pct_descartado": 0.0,
+        "ordens": 7.52,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 1595,
+      "MAD_1d": {
+        "value": 0.013169,
+        "threshold": 0.019683,
+        "flag": "conforme",
+        "n": 1595
+      },
+      "JS_1d": {
+        "value": 0.002961,
+        "threshold": 0.006173,
+        "flag": "conforme",
+        "n": 1595
+      },
+      "MAD_2d": {
+        "value": 0.003013,
+        "threshold": 0.001577,
+        "flag": "cr?tico",
+        "n": 1516,
+        "pct_descartado_filtro_10": 0.0495
+      },
+      "JS_2d": {
+        "value": 0.023139,
+        "threshold": 0.040996,
+        "flag": "conforme",
+        "n": 1516
+      },
+      "Last": {
+        "value": 0.2915,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 162.511,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2915,
+        "n": 1595
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério das Mulheres": {
+      "eligibility": {
+        "total_raw": 336,
+        "total_valid": 336,
+        "pct_descartado": 0.0,
+        "ordens": 6.14,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 336,
+      "MAD_1d": {
+        "value": 0.035618,
+        "threshold": 0.020937,
+        "flag": "cr?tico",
+        "n": 336
+      },
+      "JS_1d": {
+        "value": 0.02738,
+        "threshold": 0.046071,
+        "flag": "conforme",
+        "n": 336
+      },
+      "MAD_2d": {
+        "value": 0.007774,
+        "threshold": 0.001675,
+        "flag": "cr?tico",
+        "n": 335,
+        "pct_descartado_filtro_10": 0.003
+      },
+      "JS_2d": {
+        "value": 0.180941,
+        "threshold": 0.25587,
+        "flag": "conforme",
+        "n": 335
+      },
+      "Last": {
+        "value": 0.5744,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 691.2024,
+        "p_valor": 0.0,
+        "conc_0_5": 0.5744,
+        "n": 336
+      },
+      "zscore": {
+        "digito_anomalo": "2",
+        "zscore": 6.4929,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "2",
+        "p_obs": 0.3125,
+        "p_esp": 0.1761,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério da Ciência, Tecnologia e Inovaç": {
+      "eligibility": {
+        "total_raw": 26643,
+        "total_valid": 26643,
+        "pct_descartado": 0.0,
+        "ordens": 10.44,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 26643,
+      "MAD_1d": {
+        "value": 0.003516,
+        "threshold": 0.018389,
+        "flag": "conforme",
+        "n": 26643
+      },
+      "JS_1d": {
+        "value": 0.000407,
+        "threshold": 0.000644,
+        "flag": "conforme",
+        "n": 26643
+      },
+      "MAD_2d": {
+        "value": 0.00187,
+        "threshold": 0.001472,
+        "flag": "cr?tico",
+        "n": 25492,
+        "pct_descartado_filtro_10": 0.0432
+      },
+      "JS_2d": {
+        "value": 0.010414,
+        "threshold": 0.011897,
+        "flag": "alerta",
+        "n": 25492
+      },
+      "Last": {
+        "value": 0.3743,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 10638.8733,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3743,
+        "n": 26643
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério do Desenvolvimento Agrário e Agr": {
+      "eligibility": {
+        "total_raw": 43446,
+        "total_valid": 43446,
+        "pct_descartado": 0.0,
+        "ordens": 10.45,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 43446,
+      "MAD_1d": {
+        "value": 0.009475,
+        "threshold": 0.018234,
+        "flag": "conforme",
+        "n": 43446
+      },
+      "JS_1d": {
+        "value": 0.001848,
+        "threshold": 0.002174,
+        "flag": "alerta",
+        "n": 43446
+      },
+      "MAD_2d": {
+        "value": 0.002077,
+        "threshold": 0.00146,
+        "flag": "cr?tico",
+        "n": 40499,
+        "pct_descartado_filtro_10": 0.0678
+      },
+      "JS_2d": {
+        "value": 0.012199,
+        "threshold": 0.013389,
+        "flag": "alerta",
+        "n": 40499
+      },
+      "Last": {
+        "value": 0.2757,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 2240.9613,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2757,
+        "n": 43446
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério do Meio Ambiente e Mudança do Cl": {
+      "eligibility": {
+        "total_raw": 34870,
+        "total_valid": 34870,
+        "pct_descartado": 0.0,
+        "ordens": 10.72,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 34870,
+      "MAD_1d": {
+        "value": 0.008881,
+        "threshold": 0.018302,
+        "flag": "conforme",
+        "n": 34870
+      },
+      "JS_1d": {
+        "value": 0.001509,
+        "threshold": 0.001856,
+        "flag": "alerta",
+        "n": 34870
+      },
+      "MAD_2d": {
+        "value": 0.002204,
+        "threshold": 0.001466,
+        "flag": "cr?tico",
+        "n": 32847,
+        "pct_descartado_filtro_10": 0.058
+      },
+      "JS_2d": {
+        "value": 0.012926,
+        "threshold": 0.01433,
+        "flag": "alerta",
+        "n": 32847
+      },
+      "Last": {
+        "value": 0.2451,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 774.3522,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2451,
+        "n": 34870
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério das Relações Exteriores": {
+      "eligibility": {
+        "total_raw": 24973,
+        "total_valid": 24973,
+        "pct_descartado": 0.0,
+        "ordens": 9.48,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 24973,
+      "MAD_1d": {
+        "value": 0.009088,
+        "threshold": 0.018411,
+        "flag": "conforme",
+        "n": 24973
+      },
+      "JS_1d": {
+        "value": 0.001707,
+        "threshold": 0.00215,
+        "flag": "conforme",
+        "n": 24973
+      },
+      "MAD_2d": {
+        "value": 0.001398,
+        "threshold": 0.001473,
+        "flag": "alerta",
+        "n": 24810,
+        "pct_descartado_filtro_10": 0.0065
+      },
+      "JS_2d": {
+        "value": 0.004035,
+        "threshold": 0.005321,
+        "flag": "conforme",
+        "n": 24810
+      },
+      "Last": {
+        "value": 0.221,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 100.7048,
+        "p_valor": 0.0,
+        "conc_0_5": 0.221,
+        "n": 24973
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério do Planejamento e Orçamento": {
+      "eligibility": {
+        "total_raw": 31510,
+        "total_valid": 31510,
+        "pct_descartado": 0.0,
+        "ordens": 10.82,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 31510,
+      "MAD_1d": {
+        "value": 0.02018,
+        "threshold": 0.018334,
+        "flag": "cr?tico",
+        "n": 31510
+      },
+      "JS_1d": {
+        "value": 0.008047,
+        "threshold": 0.008763,
+        "flag": "alerta",
+        "n": 31510
+      },
+      "MAD_2d": {
+        "value": 0.005305,
+        "threshold": 0.001471,
+        "flag": "cr?tico",
+        "n": 27209,
+        "pct_descartado_filtro_10": 0.1365
+      },
+      "JS_2d": {
+        "value": 0.077684,
+        "threshold": 0.080681,
+        "flag": "alerta",
+        "n": 27209
+      },
+      "Last": {
+        "value": 0.3876,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 8953.7245,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3876,
+        "n": 31510
+      },
+      "zscore": {
+        "digito_anomalo": "3",
+        "zscore": 22.9101,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "3",
+        "p_obs": 0.1676,
+        "p_esp": 0.1249,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério do Trabalho e Emprego": {
+      "eligibility": {
+        "total_raw": 7218,
+        "total_valid": 7218,
+        "pct_descartado": 0.0,
+        "ordens": 10.64,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 7218,
+      "MAD_1d": {
+        "value": 0.023643,
+        "threshold": 0.018888,
+        "flag": "cr?tico",
+        "n": 7218
+      },
+      "JS_1d": {
+        "value": 0.012426,
+        "threshold": 0.014514,
+        "flag": "alerta",
+        "n": 7218
+      },
+      "MAD_2d": {
+        "value": 0.005357,
+        "threshold": 0.001513,
+        "flag": "cr?tico",
+        "n": 6785,
+        "pct_descartado_filtro_10": 0.06
+      },
+      "JS_2d": {
+        "value": 0.069064,
+        "threshold": 0.076271,
+        "flag": "alerta",
+        "n": 6785
+      },
+      "Last": {
+        "value": 0.3214,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 1370.7254,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3214,
+        "n": 7218
+      },
+      "zscore": {
+        "digito_anomalo": "1",
+        "zscore": 19.1081,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "1",
+        "p_obs": 0.4043,
+        "p_esp": 0.301,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério da Previdência Social": {
+      "eligibility": {
+        "total_raw": 237787,
+        "total_valid": 237787,
+        "pct_descartado": 0.0,
+        "ordens": 12.42,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 237787,
+      "MAD_1d": {
+        "value": 0.025873,
+        "threshold": 0.01779,
+        "flag": "cr?tico",
+        "n": 237787
+      },
+      "JS_1d": {
+        "value": 0.018088,
+        "threshold": 0.018489,
+        "flag": "alerta",
+        "n": 237787
+      },
+      "MAD_2d": {
+        "value": 0.005074,
+        "threshold": 0.001423,
+        "flag": "cr?tico",
+        "n": 236043,
+        "pct_descartado_filtro_10": 0.0073
+      },
+      "JS_2d": {
+        "value": 0.062031,
+        "threshold": 0.062738,
+        "flag": "alerta",
+        "n": 236043
+      },
+      "Last": {
+        "value": 0.3028,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 19689.8075,
+        "p_valor": 0.0,
+        "conc_0_5": 0.3028,
+        "n": 237787
+      },
+      "zscore": {
+        "digito_anomalo": "5",
+        "zscore": 155.1756,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "5",
+        "p_obs": 0.1651,
+        "p_esp": 0.0792,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério da Pesca e Aquicultura": {
+      "eligibility": {
+        "total_raw": 1001,
+        "total_valid": 1001,
+        "pct_descartado": 0.0,
+        "ordens": 5.63,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 1001,
+      "MAD_1d": {
+        "value": 0.020599,
+        "threshold": 0.019999,
+        "flag": "cr?tico",
+        "n": 1001
+      },
+      "JS_1d": {
+        "value": 0.008659,
+        "threshold": 0.014886,
+        "flag": "conforme",
+        "n": 1001
+      },
+      "MAD_2d": {
+        "value": 0.004876,
+        "threshold": 0.0016,
+        "flag": "cr?tico",
+        "n": 1000,
+        "pct_descartado_filtro_10": 0.001
+      },
+      "JS_2d": {
+        "value": 0.064179,
+        "threshold": 0.095343,
+        "flag": "conforme",
+        "n": 1000
+      },
+      "Last": {
+        "value": 0.2697,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 98.9101,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2697,
+        "n": 1001
+      },
+      "zscore": {
+        "digito_anomalo": "1",
+        "zscore": 4.2837,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "1",
+        "p_obs": 0.3636,
+        "p_esp": 0.301,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério da Educação": {
+      "eligibility": {
+        "total_raw": 664130,
+        "total_valid": 664130,
+        "pct_descartado": 0.0,
+        "ordens": 11.65,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 664130,
+      "MAD_1d": {
+        "value": 0.006925,
+        "threshold": 0.017576,
+        "flag": "conforme",
+        "n": 664130
+      },
+      "JS_1d": {
+        "value": 0.000895,
+        "threshold": 0.000947,
+        "flag": "alerta",
+        "n": 664130
+      },
+      "MAD_2d": {
+        "value": 0.002312,
+        "threshold": 0.001407,
+        "flag": "cr?tico",
+        "n": 631411,
+        "pct_descartado_filtro_10": 0.0493
+      },
+      "JS_2d": {
+        "value": 0.016865,
+        "threshold": 0.017116,
+        "flag": "alerta",
+        "n": 631411
+      },
+      "Last": {
+        "value": 0.354,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 196936.1401,
+        "p_valor": 0.0,
+        "conc_0_5": 0.354,
+        "n": 664130
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Ministério dos Povos Indígenas": {
+      "eligibility": {
+        "total_raw": 16692,
+        "total_valid": 16692,
+        "pct_descartado": 0.0,
+        "ordens": 9.48,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 16692,
+      "MAD_1d": {
+        "value": 0.01707,
+        "threshold": 0.018552,
+        "flag": "alerta",
+        "n": 16692
+      },
+      "JS_1d": {
+        "value": 0.006125,
+        "threshold": 0.00705,
+        "flag": "alerta",
+        "n": 16692
+      },
+      "MAD_2d": {
+        "value": 0.003124,
+        "threshold": 0.001488,
+        "flag": "cr?tico",
+        "n": 14912,
+        "pct_descartado_filtro_10": 0.1066
+      },
+      "JS_2d": {
+        "value": 0.028658,
+        "threshold": 0.031741,
+        "flag": "alerta",
+        "n": 14912
+      },
+      "Last": {
+        "value": 0.2756,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 888.5595,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2756,
+        "n": 16692
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Banco Central do Brasil - Orçamento Fiscal e": {
+      "eligibility": {
+        "total_raw": 4217,
+        "total_valid": 4217,
+        "pct_descartado": 0.0,
+        "ordens": 8.93,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 4217,
+      "MAD_1d": {
+        "value": 0.025475,
+        "threshold": 0.019138,
+        "flag": "cr?tico",
+        "n": 4217
+      },
+      "JS_1d": {
+        "value": 0.024075,
+        "threshold": 0.027983,
+        "flag": "alerta",
+        "n": 4217
+      },
+      "MAD_2d": {
+        "value": 0.003901,
+        "threshold": 0.001531,
+        "flag": "cr?tico",
+        "n": 4174,
+        "pct_descartado_filtro_10": 0.0102
+      },
+      "JS_2d": {
+        "value": 0.060079,
+        "threshold": 0.069464,
+        "flag": "alerta",
+        "n": 4174
+      },
+      "Last": {
+        "value": 0.323,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 454.5461,
+        "p_valor": 0.0,
+        "conc_0_5": 0.323,
+        "n": 4217
+      },
+      "zscore": {
+        "digito_anomalo": "9",
+        "zscore": 30.6232,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "9",
+        "p_obs": 0.1444,
+        "p_esp": 0.0458,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério da Gestão e da Inovação em Ser": {
+      "eligibility": {
+        "total_raw": 37716,
+        "total_valid": 37716,
+        "pct_descartado": 0.0,
+        "ordens": 10.45,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 37716,
+      "MAD_1d": {
+        "value": 0.003163,
+        "threshold": 0.018278,
+        "flag": "conforme",
+        "n": 37716
+      },
+      "JS_1d": {
+        "value": 0.00027,
+        "threshold": 0.000441,
+        "flag": "conforme",
+        "n": 37716
+      },
+      "MAD_2d": {
+        "value": 0.001103,
+        "threshold": 0.001464,
+        "flag": "conforme",
+        "n": 34890,
+        "pct_descartado_filtro_10": 0.0749
+      },
+      "JS_2d": {
+        "value": 0.003129,
+        "threshold": 0.004067,
+        "flag": "conforme",
+        "n": 34890
+      },
+      "Last": {
+        "value": 0.2266,
+        "threshold": 0.25,
+        "flag": "conforme",
+        "chi2": 386.3571,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2266,
+        "n": 37716
+      },
+      "zscore": null,
+      "direcao_dig1": null
+    },
+    "Controladoria-Geral da União": {
+      "eligibility": {
+        "total_raw": 1663,
+        "total_valid": 1663,
+        "pct_descartado": 0.0,
+        "ordens": 9.87,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 1663,
+      "MAD_1d": {
+        "value": 0.02613,
+        "threshold": 0.019657,
+        "flag": "cr?tico",
+        "n": 1663
+      },
+      "JS_1d": {
+        "value": 0.011469,
+        "threshold": 0.016115,
+        "flag": "conforme",
+        "n": 1663
+      },
+      "MAD_2d": {
+        "value": 0.005448,
+        "threshold": 0.001575,
+        "flag": "cr?tico",
+        "n": 1595,
+        "pct_descartado_filtro_10": 0.0409
+      },
+      "JS_2d": {
+        "value": 0.063209,
+        "threshold": 0.084913,
+        "flag": "conforme",
+        "n": 1595
+      },
+      "Last": {
+        "value": 0.2652,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 102.3818,
+        "p_valor": 0.0,
+        "conc_0_5": 0.2652,
+        "n": 1663
+      },
+      "zscore": {
+        "digito_anomalo": "1",
+        "zscore": 5.7141,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "1",
+        "p_obs": 0.3656,
+        "p_esp": 0.301,
+        "sentido": "excesso"
+      }
+    },
+    "Ministério da Igualdade Racial": {
+      "eligibility": {
+        "total_raw": 117,
+        "total_valid": 117,
+        "pct_descartado": 0.0,
+        "ordens": 5.84,
+        "decisao": "eleg?vel",
+        "motivo": "OK"
+      },
+      "excluido": false,
+      "n": 117,
+      "MAD_1d": {
+        "value": 0.02272,
+        "threshold": 0.022253,
+        "flag": "cr?tico",
+        "n": 117
+      },
+      "JS_1d": {
+        "value": 0.031017,
+        "threshold": 0.060605,
+        "flag": "conforme",
+        "n": 117
+      },
+      "MAD_2d": {
+        "value": 0.008313,
+        "threshold": 0.001782,
+        "flag": "cr?tico",
+        "n": 115,
+        "pct_descartado_filtro_10": 0.0171
+      },
+      "JS_2d": {
+        "value": 0.215101,
+        "threshold": 0.346286,
+        "flag": "conforme",
+        "n": 115
+      },
+      "Last": {
+        "value": 0.2906,
+        "threshold": 0.25,
+        "flag": "cr?tico",
+        "chi2": 25.1368,
+        "p_valor": 0.002824,
+        "conc_0_5": 0.2906,
+        "n": 117
+      },
+      "zscore": {
+        "digito_anomalo": "9",
+        "zscore": 2.1474,
+        "significativo": true
+      },
+      "direcao_dig1": {
+        "digito": "9",
+        "p_obs": 0.0,
+        "p_esp": 0.0458,
+        "sentido": "d?ficit"
+      }
+    }
+  }
+}

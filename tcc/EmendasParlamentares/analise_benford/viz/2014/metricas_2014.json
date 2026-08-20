@@ -1,0 +1,40 @@
+{
+  "ano": 2014,
+  "funcoes": {
+    "Saúde": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "alerta",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 5048
+    },
+    "Urbanismo": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "alerta",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 1999
+    },
+    "Agricultura": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "alerta",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 1059
+    },
+    "Direitos da cidadania": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 102
+    },
+    "Educação": {
+      "mad_1d_flag": "cr?tico",
+      "js_1d_flag": "conforme",
+      "mad_2d_flag": "cr?tico",
+      "last_flag": "cr?tico",
+      "n": 480
+    }
+  }
+}
