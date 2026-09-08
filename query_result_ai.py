@@ -1,6 +1,3 @@
-# Script que le resultados do Motor Estatístico de dentro do banco de dados SQLite e utiliza um modelo de linguagem para analisar os dados e identificar possíveis irregularidades, 
-# padrões suspeitos ou insights relevantes. O script também pode recuperar documentos relacionados a partir do Milvus usando embeddings e fornecer uma análise detalhada com base nesses documentos.
-
 import os
 import json
 import sqlite3
@@ -14,102 +11,48 @@ from sentence_transformers import SentenceTransformer
 # CONFIG
 # =====================================================
 
-SQLITE_DB_PATH = os.getenv(
-    "SQLITE_DB_PATH",
-    "motor_estatistico.db"
-)
+SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "motor_estatistico.db")
+SQLITE_TABLE = os.getenv("SQLITE_TABLE", "EmendasParlamentares") 
+MILVUS_URI = os.getenv("MILVUS_URI", "http://localhost:19530")
+MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION", "rag_documents")
+TOP_K = int(os.getenv("TOP_K", "5"))
 
-SQLITE_TABLE = os.getenv(
-    "SQLITE_TABLE",
-    "EmendasParlamentares"
-) 
+HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN", "")
+HF_EMBED_MODEL = os.getenv("HF_EMBED_MODEL", "BAAI/bge-base-en-v1.5")
+HF_LLM_MODEL = os.getenv("HF_LLM_MODEL", "meta-llama/Meta-Llama-3-8B-Instruct")
 
-MILVUS_URI = os.getenv(
-    "MILVUS_URI",
-    "http://localhost:19530"
-)
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "openai.gpt-oss-20b-1:0")
 
-MILVUS_COLLECTION = os.getenv(
-    "MILVUS_COLLECTION",
-    "rag_documents"
-)
-
-TOP_K = int(
-    os.getenv(
-        "TOP_K",
-        "5"
-    )
-)
-
-HF_TOKEN = os.getenv(
-    "HUGGINGFACE_API_TOKEN",
-    ""
-)
-
-HF_EMBED_MODEL = os.getenv(
-    "HF_EMBED_MODEL",
-    "BAAI/bge-base-en-v1.5"
-)
-
-HF_LLM_MODEL = os.getenv(
-    "HF_LLM_MODEL",
-    "meta-llama/Meta-Llama-3-8B-Instruct"
-)
-
-AWS_REGION = os.getenv(
-    "AWS_REGION",
-    "us-east-1"
-)
-
-BEDROCK_MODEL_ID = os.getenv(
-    "BEDROCK_MODEL_ID",
-    "openai.gpt-oss-20b-1:0"
-)
-
-bedrock = boto3.client(
-    "bedrock-runtime",
-    region_name=AWS_REGION
-)
+bedrock = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 
 # =====================================================
 # SQLITE
 # =====================================================
 
-def load_transaction():
-
+def load_transactions():
+    """Gerador que retorna todas as transações da tabela."""
     conn = sqlite3.connect(SQLITE_DB_PATH)
     conn.row_factory = sqlite3.Row
-
     cursor = conn.cursor()
 
-    cursor.execute(
-        f"""
-        SELECT *
-        FROM {SQLITE_TABLE}
-        LIMIT 1
-        """
-    )
-
-    row = cursor.fetchone()
-
+    cursor.execute(f"SELECT * FROM {SQLITE_TABLE}")
+    rows = cursor.fetchall()
     conn.close()
 
-    if row is None:
-        raise Exception("Nenhuma transação encontrada")
+    if not rows:
+        raise Exception("Nenhuma transação encontrada na tabela")
 
-    data = dict(row)
+    for row in rows:
+        data = dict(row)
+        emenda_key = data.get("codigo_da_emenda")
+        if not emenda_key:
+            print(f"[AVISO] Registro ID {data.get('id', 'N/A')} ignorado: sem 'codigo_da_emenda'")
+            continue
+        yield emenda_key, data
 
-    emenda_key = data.get("codigo_da_emenda")
-
-    if not emenda_key:
-        raise Exception(
-            "Transação sem 'codigo_da_emenda' — não é possível referenciar a emenda"
-        )
-
-    return emenda_key, data
 
 def init_result_table(conn):
-
     cursor = conn.cursor()
 
     cursor.execute(
@@ -150,14 +93,8 @@ def init_result_table(conn):
     conn.commit()
 
 
-def save_result_to_sqlite(emenda_id, result):
-
-    conn = sqlite3.connect(SQLITE_DB_PATH)
-
-    init_result_table(conn)
-
+def save_result_to_sqlite(conn, emenda_id, result):
     cursor = conn.cursor()
-
     nivel_anomalia = extract_nivel_anomalia(result["analysis"])
 
     cursor.execute(
@@ -181,27 +118,20 @@ def save_result_to_sqlite(emenda_id, result):
     )
 
     conn.commit()
-    inserted_id = cursor.lastrowid
-    conn.close()
-
-    return inserted_id
+    return cursor.lastrowid
 
 # =====================================================
 # HUGGINGFACE EMBEDDING
 # =====================================================
 
-embedding_model = SentenceTransformer(
-    HF_EMBED_MODEL
-)
+embedding_model = SentenceTransformer(HF_EMBED_MODEL)
 
 def generate_embedding(text: str):
-
     embedding = embedding_model.encode(
         text,
         normalize_embeddings=True,
         convert_to_numpy=True
     )
-
     return embedding.tolist()
 
 # =====================================================
@@ -209,14 +139,8 @@ def generate_embedding(text: str):
 # =====================================================
 
 def search_documents(query_text):
-
-    client = MilvusClient(
-        uri=MILVUS_URI
-    )
-
-    embedding = generate_embedding(
-        query_text
-    )
+    client = MilvusClient(uri=MILVUS_URI)
+    embedding = generate_embedding(query_text)
 
     results = client.search(
         collection_name=MILVUS_COLLECTION,
@@ -226,18 +150,12 @@ def search_documents(query_text):
     )
 
     docs = []
-
     for hit in results[0]:
-
         entity = hit.get("entity", {})
-
         docs.append(
             {
                 "score": hit["distance"],
-                "content": entity.get(
-                    "content",
-                    ""
-                )
+                "content": entity.get("content", "")
             }
         )
 
@@ -302,18 +220,9 @@ Texto curto de até 5 linhas.
 """
 
 def build_prompt(transaction, docs):
-
-    transaction_json = json.dumps(
-        transaction,
-        indent=2,
-        ensure_ascii=False
-    )
-
+    transaction_json = json.dumps(transaction, indent=2, ensure_ascii=False)
     context = "\n\n".join(
-        [
-            f"[Documento {i+1}]\n{d['content']}"
-            for i, d in enumerate(docs)
-        ]
+        [f"[Documento {i+1}]\n{d['content']}" for i, d in enumerate(docs)]
     )
 
     return f"""
@@ -339,16 +248,11 @@ Mostre apenas os indícios relevantes.
 """
 
 # =====================================================
-# HUGGINGFACE LLM
+# HUGGINGFACE / BEDROCK LLM
 # =====================================================
 
 def generate_answer(prompt):
-
-    full_prompt = f"""
-        {SYSTEM_PROMPT}
-
-        {prompt}
-        """
+    full_prompt = f"{SYSTEM_PROMPT}\n\n{prompt}"
 
     body = {
         "messages": [
@@ -366,18 +270,10 @@ def generate_answer(prompt):
         body=json.dumps(body)
     )
 
-    result = json.loads(
-        response["body"].read()
-    )
-
+    result = json.loads(response["body"].read())
     return result["choices"][0]["message"]["content"]
 
 def extract_nivel_anomalia(answer: str) -> str:
-    """
-    Extrai o nível da anomalia (BAIXO/MÉDIO/CRÍTICO) do texto gerado pela IA.
-    Retorna em caixa alta e sem acento, ou 'INDEFINIDO' se não encontrar.
-    """
-
     match = re.search(
         r"NÍVEL DA ANOMALIA\s*\n+\s*(Baixo|Médio|Medio|Crítico|Critico)",
         answer,
@@ -388,69 +284,34 @@ def extract_nivel_anomalia(answer: str) -> str:
         return "INDEFINIDO"
 
     nivel = match.group(1).upper()
-
-    # normaliza acentuação
-    nivel = (
-        nivel
-        .replace("É", "E")
-        .replace("Í", "I")
-    )
-
+    nivel = nivel.replace("É", "E").replace("Í", "I")
     return nivel
 
 # =====================================================
 # MAIN
 # =====================================================
 
-def run():
-
-    print("=" * 60)
-    print("FRAUD RAG AGENT")
-    print("=" * 60)
-
-    print("\n[1] Carregando transação...")
-    emenda_id, transaction = load_transaction()
+def run_single(emenda_id, transaction):
+    print(f"\n--- Processando Emenda: {emenda_id} ---")
 
     query_text = (
         "fraude auditoria irregularidade "
-        + " ".join(
-            [
-                f"{k} {v}"
-                for k, v in transaction.items()
-                if v is not None
-            ]
-        )
+        + " ".join([f"{k} {v}" for k, v in transaction.items() if v is not None])
     )
 
-    print("\n[2] Buscando documentos...")
+    print("[1] Buscando documentos no Milvus...")
+    docs = search_documents(query_text)
+    print(f"    {len(docs)} documentos recuperados.")
 
-    docs = search_documents(
-        query_text
-    )
+    print("[2] Montando prompt e consultando LLM...")
+    prompt = build_prompt(transaction, docs)
+    answer = generate_answer(prompt)
 
-    print(
-        f"{len(docs)} documentos recuperados"
-    )
-
-    print("\n[3] Montando prompt...")
-
-    prompt = build_prompt(
-        transaction,
-        docs
-    )
-
-    print("\n[4] Consultando LLM...")
-
-    answer = generate_answer(
-        prompt
-    )
-
-    print("\n")
-    print("=" * 60)
+    print("\n" + "=" * 60)
     print(answer)
     print("=" * 60)
 
-    return emenda_id, {
+    return {
         "transaction": transaction,
         "documents": docs,
         "analysis": answer
@@ -461,12 +322,26 @@ def run():
 # =====================================================
 
 if __name__ == "__main__":
+    print("=" * 60)
+    print("FRAUD RAG AGENT - PROCESSAMENTO EM LOTE")
+    print("=" * 60)
 
-    emenda_id, result = run()
+    # Conecta ao SQLite e garante a criação da tabela de resultados
+    conn = sqlite3.connect(SQLITE_DB_PATH)
+    init_result_table(conn)
 
-    inserted_id = save_result_to_sqlite(emenda_id, result)
+    total_processados = 0
 
-    print(
-        f"\nResultado salvo em AnaliseResultados (id={inserted_id}, "
-        f"emenda_id={emenda_id}) no banco {SQLITE_DB_PATH}"
-    )
+    try:
+        for emenda_id, transaction in load_transactions():
+            try:
+                result = run_single(emenda_id, transaction)
+                inserted_id = save_result_to_sqlite(conn, emenda_id, result)
+                print(f"[SUCESSO] Salvo no banco AnaliseResultados (id={inserted_id}, emenda_id={emenda_id})")
+                total_processados += 1
+            except Exception as e:
+                print(f"[ERRO] Falha ao processar emenda {emenda_id}: {str(e)}")
+    finally:
+        conn.close()
+
+    print(f"\n[FINALIZADO] Processamento concluído. Total de registros analisados: {total_processados}")
