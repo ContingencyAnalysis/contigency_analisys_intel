@@ -3,16 +3,54 @@ import json
 import sqlite3
 import boto3
 import re
+from typing import Iterator
+from pathlib import Path
 
 from pymilvus import MilvusClient
 from sentence_transformers import SentenceTransformer
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import dotenv_values, load_dotenv
+
+load_dotenv()
 
 # =====================================================
 # CONFIG
 # =====================================================
 
 SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "motor_estatistico.db")
-SQLITE_TABLE = os.getenv("SQLITE_TABLE", "EmendasParlamentares") 
+DATASET = os.getenv("AGENT_DATASET", "emendas").strip().lower()
+DATA_SOURCE = os.getenv("AGENT_SOURCE", "sqlite").strip().lower()
+SQLITE_TABLE = os.getenv(
+    "SQLITE_TABLE",
+    "Compras" if DATASET in {"compras", "compras_publicas"} else "EmendasParlamentares",
+)
+# The bulk pipeline exposes group_id, while the legacy emendas table uses
+# codigo_da_emenda.  A column can be forced when a source has an ambiguous
+# schema; otherwise the first existing candidate is selected automatically.
+ENTITY_ID_COLUMN = os.getenv("ENTITY_ID_COLUMN", "").strip()
+ENTITY_ID_CANDIDATES = tuple(
+    value.strip()
+    for value in os.getenv(
+        "ENTITY_ID_CANDIDATES",
+        "group_id,codigo_da_compra,numero_processo,identificador,codigo_da_emenda,id",
+    ).split(",")
+    if value.strip()
+)
+PROCESS_LIMIT = int(os.getenv("AGENT_LIMIT", "0"))
+PROCESS_OFFSET = int(os.getenv("AGENT_OFFSET", "0"))
+REQUESTED_GROUP_IDS = tuple(
+    value.strip() for value in os.getenv("AGENT_GROUP_IDS", "").split(",") if value.strip()
+)
+BACKEND_ENV_PATH = Path(__file__).resolve().parent.parent / "contigency_analisys_backend" / ".env"
+POSTGRES_URL = (
+    os.getenv("AGENT_DATABASE_URL")
+    or dotenv_values(BACKEND_ENV_PATH).get("DATABASE_URL")
+    or os.getenv("DATABASE_URL", "")
+)
+POSTGRES_TABLE = os.getenv("AGENT_POSTGRES_TABLE", "baseline_organization_metrics")
+POSTGRES_SOURCE_SYSTEM = os.getenv("AGENT_SOURCE_SYSTEM", "Compras")
+POSTGRES_DATASET = os.getenv("AGENT_POSTGRES_DATASET", "compras")
 MILVUS_URI = os.getenv("MILVUS_URI", "http://localhost:19530")
 MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION", "rag_documents")
 TOP_K = int(os.getenv("TOP_K", "5"))
@@ -30,37 +68,103 @@ bedrock = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 # SQLITE
 # =====================================================
 
-def load_transactions():
-    """Gerador que retorna todas as transações da tabela."""
+def _quote_identifier(identifier: str) -> str:
+    """Quote a SQLite identifier after validating it came from configuration."""
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", identifier):
+        raise ValueError(f"Identificador SQLite inválido: {identifier!r}")
+    return f'"{identifier}"'
+
+
+def load_transactions() -> Iterator[tuple[str, dict]]:
+    """Read transactions from the configured dataset, including Compras."""
     conn = sqlite3.connect(SQLITE_DB_PATH)
     conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    try:
+        table = _quote_identifier(SQLITE_TABLE)
+        columns = [row[1] for row in conn.execute(f"PRAGMA table_info({table})")]
+        if not columns:
+            raise Exception(f"Tabela de dados não encontrada: {SQLITE_TABLE}")
+        id_column = ENTITY_ID_COLUMN or next(
+            (candidate for candidate in ENTITY_ID_CANDIDATES if candidate in columns), None
+        )
+        if not id_column:
+            raise Exception(
+                f"Nenhuma coluna identificadora encontrada em {SQLITE_TABLE}. "
+                f"Colunas disponíveis: {', '.join(columns)}"
+            )
+        query = f"SELECT rowid AS _agent_rowid, * FROM {table} WHERE {_quote_identifier(id_column)} IS NOT NULL"
+        parameters: list[int] = []
+        if PROCESS_LIMIT:
+            query += " LIMIT ? OFFSET ?"
+            parameters.extend([PROCESS_LIMIT, PROCESS_OFFSET])
+        elif PROCESS_OFFSET:
+            query += " LIMIT -1 OFFSET ?"
+            parameters.append(PROCESS_OFFSET)
+        for row in conn.execute(query, parameters):
+            data = dict(row)
+            entity_id = str(data.get(id_column)).strip()
+            data.pop("_agent_rowid", None)
+            yield entity_id, data
+    finally:
+        conn.close()
 
-    cursor.execute(f"SELECT * FROM {SQLITE_TABLE}")
-    rows = cursor.fetchall()
-    conn.close()
 
+def load_postgres_transactions() -> Iterator[tuple[str, dict]]:
+    """Read the same baseline metric rows selected by the dashboard."""
+    if not POSTGRES_URL:
+        raise RuntimeError("DATABASE_URL é obrigatório quando AGENT_SOURCE=postgres")
+    if POSTGRES_TABLE != "baseline_organization_metrics":
+        raise ValueError("AGENT_POSTGRES_TABLE não permitido")
+
+    query = f"""
+        SELECT *
+        FROM {POSTGRES_TABLE}
+        WHERE source_system = %s AND dataset = %s
+        {'AND group_id = ANY(%s)' if REQUESTED_GROUP_IDS else ''}
+        ORDER BY period_key DESC NULLS LAST
+        LIMIT %s OFFSET %s
+    """
+    query_parameters: list[object] = [POSTGRES_SOURCE_SYSTEM, POSTGRES_DATASET]
+    if REQUESTED_GROUP_IDS:
+        query_parameters.append(list(REQUESTED_GROUP_IDS))
+    query_parameters.extend([PROCESS_LIMIT or 100000, PROCESS_OFFSET])
+    with psycopg2.connect(POSTGRES_URL) as connection:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute(query, query_parameters)
+            rows = cursor.fetchall()
     if not rows:
-        raise Exception("Nenhuma transação encontrada na tabela")
-
+        raise RuntimeError(
+            f"Nenhum registro encontrado para {POSTGRES_SOURCE_SYSTEM}/{POSTGRES_DATASET}"
+        )
     for row in rows:
         data = dict(row)
-        emenda_key = data.get("codigo_da_emenda")
-        if not emenda_key:
-            print(f"[AVISO] Registro ID {data.get('id', 'N/A')} ignorado: sem 'codigo_da_emenda'")
-            continue
-        yield emenda_key, data
+        entity_id = str(data.get("group_id") or data.get("orgao_id") or "").strip()
+        if entity_id:
+            yield entity_id, data
+
+
+def iter_transactions() -> Iterator[tuple[str, dict]]:
+    if DATA_SOURCE == "postgres":
+        return load_postgres_transactions()
+    if DATA_SOURCE != "sqlite":
+        raise ValueError("AGENT_SOURCE deve ser 'sqlite' ou 'postgres'")
+    return load_transactions()
 
 
 def init_result_table(conn):
     cursor = conn.cursor()
-
-    cursor.execute(
-        f"""
-        CREATE INDEX IF NOT EXISTS idx_emendas_codigo
-        ON {SQLITE_TABLE} (codigo_da_emenda)
-        """
+    # The source index is useful for reruns, but is optional because some
+    # datasets (notably Compras) use a different identifier column.
+    source_columns = [row[1] for row in cursor.execute(
+        f"PRAGMA table_info({_quote_identifier(SQLITE_TABLE)})"
+    )]
+    source_id = ENTITY_ID_COLUMN or next(
+        (candidate for candidate in ENTITY_ID_CANDIDATES if candidate in source_columns), None
     )
+    if source_id:
+        cursor.execute(
+            f"CREATE INDEX IF NOT EXISTS idx_agent_entity_id ON {_quote_identifier(SQLITE_TABLE)} ({_quote_identifier(source_id)})"
+        )
 
     cursor.execute(
         """
@@ -333,7 +437,8 @@ if __name__ == "__main__":
     total_processados = 0
 
     try:
-        for emenda_id, transaction in load_transactions():
+        loader = iter_transactions()
+        for emenda_id, transaction in loader:
             try:
                 result = run_single(emenda_id, transaction)
                 inserted_id = save_result_to_sqlite(conn, emenda_id, result)

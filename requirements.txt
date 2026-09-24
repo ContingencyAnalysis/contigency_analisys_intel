@@ -13,3 +13,5 @@ xlrd
 psycopg2-binary
 accelerate
 openai
+fastapi
+uvicorn[standard]
