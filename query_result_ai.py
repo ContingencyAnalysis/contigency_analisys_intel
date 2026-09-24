@@ -284,6 +284,12 @@ REGRAS:
 - Se os documentos recuperados não forem relacionados diretamente ao caso, informe isso explicitamente.
 - Não faça resumo dos documentos.
 - Não liste informações irrelevantes.
+- Considere obrigatoriamente os campos estatísticos da transação (sample_size,
+  eligible, alerted e eligibility_reason). Se eligible for falso ou alerted for
+  falso, deixe claro que não há evidência estatística suficiente de anomalia;
+  não trate a falta de amostra como prova de suspeita.
+- Não invente métricas para campos nulos e não atribua aos documentos relação
+  com a transação quando ela não existir.
 - Classifique o NÍVEL DA ANOMALIA como BAIXO, MÉDIO ou CRÍTICO, considerando:
   * BAIXO: inconsistências pontuais, sem indícios de padrão de irregularidade ou valores discrepantes relevantes.
   * MÉDIO: inconsistências relevantes e/ou repetição de padrões atípicos, mas sem evidência direta de fraude/desvio.
@@ -340,7 +346,9 @@ DOCUMENTOS RECUPERADOS
 
 Pergunta:
 
-Explique somente os possíveis motivos que levaram o motor estatístico a considerar esta transação suspeita.
+        Explique somente os possíveis motivos que levaram o motor estatístico a considerar esta transação suspeita. Se os campos
+        `eligible` ou `alerted` indicarem que não houve alerta, corrija a premissa:
+        informe que a análise não confirmou suspeita e explique apenas as limitações observadas.
 
 Não determine fraude.
 

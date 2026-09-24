@@ -3,6 +3,7 @@
 import json
 import os
 import sqlite3
+import re
 from pathlib import Path
 from typing import Any
 
@@ -65,6 +66,11 @@ def _parse_json(value: str | None, fallback: Any) -> Any:
         return fallback
 
 
+def _clean_analysis(value: str) -> str:
+    """Remove internal model traces before returning text to the UI."""
+    return re.sub(r"<\s*(?:reasoning|think)\b[^>]*>[\s\S]*?<\s*/\s*(?:reasoning|think)\s*>", "", value, flags=re.IGNORECASE).strip()
+
+
 def _to_analysis(row: sqlite3.Row) -> Analysis:
     complete = _parse_json(row["resultado_completo"], {})
     return Analysis(
@@ -72,7 +78,7 @@ def _to_analysis(row: sqlite3.Row) -> Analysis:
         emenda_id=row["emenda_id"],
         criado_em=row["criado_em"],
         nivel_anomalia=row["nivel_anomalia"],
-        analysis=row["analysis"],
+        analysis=_clean_analysis(row["analysis"]),
         transaction=complete.get("transaction") if isinstance(complete, dict) else None,
         documents=_parse_json(row["documents_json"], []),
         resultado_completo=complete if isinstance(complete, dict) else None,
@@ -111,7 +117,10 @@ def list_analyses(
     parameters.extend([limit, offset])
     with _connect() as connection:
         rows = connection.execute(query, parameters).fetchall()
-    return [AnalysisSummary(**dict(row)) for row in rows]
+    return [
+        AnalysisSummary(**{**dict(row), "analysis": _clean_analysis(row["analysis"])})
+        for row in rows
+    ]
 
 
 @app.get("/api/analises/{emenda_id}", response_model=Analysis)
