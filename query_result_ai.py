@@ -3,6 +3,7 @@ import json
 import sqlite3
 import boto3
 import re
+import unicodedata
 from typing import Iterator
 from pathlib import Path
 
@@ -39,6 +40,8 @@ ENTITY_ID_CANDIDATES = tuple(
 )
 PROCESS_LIMIT = int(os.getenv("AGENT_LIMIT", "0"))
 PROCESS_OFFSET = int(os.getenv("AGENT_OFFSET", "0"))
+# Safety guard for batch runs. Zero means no additional cap.
+MAX_PROCESSED = int(os.getenv("AGENT_MAX_PROCESSED", "0"))
 REQUESTED_GROUP_IDS = tuple(
     value.strip() for value in os.getenv("AGENT_GROUP_IDS", "").split(",") if value.strip()
 )
@@ -54,6 +57,7 @@ POSTGRES_DATASET = os.getenv("AGENT_POSTGRES_DATASET", "compras")
 MILVUS_URI = os.getenv("MILVUS_URI", "http://localhost:19530")
 MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION", "rag_documents")
 TOP_K = int(os.getenv("TOP_K", "5"))
+MILVUS_CANDIDATES = max(TOP_K * 5, 20)
 
 HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN", "")
 HF_EMBED_MODEL = os.getenv("HF_EMBED_MODEL", "BAAI/bge-base-en-v1.5")
@@ -260,28 +264,59 @@ def generate_embedding(text: str):
 # MILVUS
 # =====================================================
 
-def search_documents(query_text):
+def _search_tokens(value):
+    normalized = unicodedata.normalize("NFKD", str(value or "")).encode(
+        "ascii", "ignore"
+    ).decode().lower()
+    return {
+        token for token in re.findall(r"[a-z0-9][a-z0-9_.-]{2,}", normalized)
+        if token not in {"true", "false", "null", "none"}
+    }
+
+
+def search_documents(transaction):
+    """Retrieve and rerank legal documents using the transaction's identity/context."""
+    query_text = " | ".join(
+        f"{key}: {value}"
+        for key, value in transaction.items()
+        if value is not None and str(value).strip()
+    )
+    transaction_tokens = _search_tokens(query_text)
     client = MilvusClient(uri=MILVUS_URI)
     embedding = generate_embedding(query_text)
 
     results = client.search(
         collection_name=MILVUS_COLLECTION,
         data=[embedding],
-        limit=TOP_K,
-        output_fields=["content"]
+        limit=MILVUS_CANDIDATES,
+        output_fields=["content", "metadata"]
     )
 
     docs = []
     for hit in results[0]:
         entity = hit.get("entity", {})
-        docs.append(
-            {
-                "score": hit["distance"],
-                "content": entity.get("content", "")
-            }
+        content = entity.get("content", "")
+        metadata = entity.get("metadata") or {}
+        document_tokens = _search_tokens(
+            content + " " + " ".join(str(value) for value in metadata.values())
         )
+        overlap = transaction_tokens & document_tokens
+        # Exact contextual matches outrank generic semantic matches. This avoids
+        # returning unrelated audit reports merely because they discuss fraud.
+        relevance = len(overlap) * 0.15
+        for field in ("group_name", "group_id", "orgao_id", "period_key", "dataset"):
+            value_tokens = _search_tokens(transaction.get(field))
+            if value_tokens and value_tokens <= document_tokens:
+                relevance += 2.0
+        docs.append({
+            "score": hit["distance"],
+            "relevance": relevance,
+            "content": content,
+            "metadata": metadata,
+        })
 
-    return docs
+    docs.sort(key=lambda item: (item["relevance"], item["score"]), reverse=True)
+    return docs[:TOP_K]
 
 # =====================================================
 # PROMPT
@@ -424,13 +459,8 @@ def extract_nivel_anomalia(answer: str) -> str:
 def run_single(emenda_id, transaction):
     print(f"\n--- Processando Emenda: {emenda_id} ---")
 
-    query_text = (
-        "fraude auditoria irregularidade "
-        + " ".join([f"{k} {v}" for k, v in transaction.items() if v is not None])
-    )
-
     print("[1] Buscando documentos no Milvus...")
-    docs = search_documents(query_text)
+    docs = search_documents(transaction)
     print(f"    {len(docs)} documentos recuperados.")
 
     print("[2] Montando prompt e consultando LLM...")
@@ -465,6 +495,11 @@ if __name__ == "__main__":
     try:
         loader = iter_transactions()
         for emenda_id, transaction in loader:
+            if MAX_PROCESSED and total_processados >= MAX_PROCESSED:
+                print(
+                    f"\n[PARADA] Limite AGENT_MAX_PROCESSED={MAX_PROCESSED} atingido."
+                )
+                break
             try:
                 result = run_single(emenda_id, transaction)
                 inserted_id = save_result_to_sqlite(conn, emenda_id, result)
@@ -475,4 +510,7 @@ if __name__ == "__main__":
     finally:
         conn.close()
 
-    print(f"\n[FINALIZADO] Processamento concluído. Total de registros analisados: {total_processados}")
+    print(
+        "\n[FINALIZADO] Processamento concluído. "
+        f"Total de registros analisados: {total_processados}"
+    )
