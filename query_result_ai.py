@@ -152,9 +152,12 @@ def load_postgres_transactions() -> Iterator[tuple[str, dict]]:
             cursor.execute(query, query_parameters)
             rows = cursor.fetchall()
     if not rows:
-        raise RuntimeError(
-            f"Nenhum registro encontrado para {POSTGRES_SOURCE_SYSTEM}/{POSTGRES_DATASET}"
+        print(
+            f"[FIM] Nenhum registro encontrado para "
+            f"{POSTGRES_SOURCE_SYSTEM}/{POSTGRES_DATASET} "
+            f"com offset {PROCESS_OFFSET}."
         )
+        return
     for row in rows:
         data = dict(row)
         entity_id = ":".join(
@@ -276,10 +279,19 @@ def _search_tokens(value):
 
 def search_documents(transaction):
     """Retrieve and rerank legal documents using the transaction's identity/context."""
-    query_text = " | ".join(
+    transaction_context = " | ".join(
         f"{key}: {value}"
         for key, value in transaction.items()
         if value is not None and str(value).strip()
+    )
+    # The legal corpus normally will not contain the purchase ID or exact
+    # amount. Keep procurement-law concepts in the query so applicable norms
+    # can be retrieved as contextual evidence.
+    query_text = (
+        "compras públicas licitação contrato administrativo fornecedor "
+        "Lei 14.133/2021 Lei 8.666/1993 Decreto 11.129/2022 "
+        "integridade controle fiscalização prestação de contas | "
+        + transaction_context
     )
     transaction_tokens = _search_tokens(query_text)
     client = MilvusClient(uri=MILVUS_URI)
@@ -301,9 +313,15 @@ def search_documents(transaction):
             content + " " + " ".join(str(value) for value in metadata.values())
         )
         overlap = transaction_tokens & document_tokens
+        legal_terms = _search_tokens(
+            "licitação contrato administrativo fornecedor lei decreto "
+            "integridade controle fiscalização prestação contas"
+        )
+        legal_overlap = legal_terms & document_tokens
         # Exact contextual matches outrank generic semantic matches. This avoids
         # returning unrelated audit reports merely because they discuss fraud.
         relevance = len(overlap) * 0.15
+        relevance += len(legal_overlap) * 0.08
         for field in ("group_name", "group_id", "orgao_id", "period_key", "dataset"):
             value_tokens = _search_tokens(transaction.get(field))
             if value_tokens and value_tokens <= document_tokens:
@@ -334,7 +352,11 @@ REGRAS:
 - Não afirme irregularidades sem evidências.
 - Explique apenas indícios, inconsistências ou padrões atípicos.
 - Utilize somente os documentos recuperados.
-- Se os documentos recuperados não forem relacionados diretamente ao caso, informe isso explicitamente.
+- Os documentos podem servir como base jurídica contextual mesmo quando não
+  mencionarem o ID ou o valor exato da transação. Relacione somente normas,
+  decisões, auditorias ou orientações que tratem de compras públicas,
+  licitações, contratos, integridade, controle ou fiscalização aplicáveis ao
+  caso. Se nenhum documento tiver esse conteúdo, informe isso explicitamente.
 - Não faça resumo dos documentos.
 - Não liste informações irrelevantes.
 - Considere obrigatoriamente os campos estatísticos da transação (sample_size,
@@ -352,7 +374,8 @@ Sua resposta deve conter SOMENTE:
 
 1. Motivos que podem ter contribuído para a classificação de risco.
 2. Evidências observadas na transação.
-3. Evidências encontradas nos documentos recuperados.
+3. Base jurídica/contextual encontrada nos documentos recuperados, citando a
+   lei, decreto, decisão ou orientação quando ela aparecer no conteúdo.
 4. Nível da anomalia (Baixo, Médio ou Crítico).
 5. Nível de confiança da análise (Alto, Médio ou Baixo).
 
