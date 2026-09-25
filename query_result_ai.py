@@ -110,18 +110,33 @@ def load_transactions() -> Iterator[tuple[str, dict]]:
 
 
 def load_postgres_transactions() -> Iterator[tuple[str, dict]]:
-    """Read the same baseline metric rows selected by the dashboard."""
+    """Read the Benford metrics published for the dashboard's Compras view."""
     if not POSTGRES_URL:
         raise RuntimeError("DATABASE_URL é obrigatório quando AGENT_SOURCE=postgres")
     if POSTGRES_TABLE != "baseline_organization_metrics":
         raise ValueError("AGENT_POSTGRES_TABLE não permitido")
 
     query = f"""
-        SELECT *
+        SELECT run_id, source_system, dataset, orgao_id, group_id, group_name,
+               sample_size, mad, jsd, z_max, last_digit_test,
+               risk_p50, risk_p90, risk_p95, alerted, eligible,
+               eligibility_reason, mad_threshold, jsd_threshold, z_threshold,
+               last_digit_threshold, mad_normalized, jsd_normalized,
+               z_normalized, last_digit_normalized, config_version,
+               analysis_variant, first_two_sample_size, mad_2d,
+               mad_2d_threshold, mad_2d_normalized, mad_2d_flag, jsd_2d,
+               jsd_2d_threshold, jsd_2d_normalized, jsd_2d_flag,
+               measure_name, grouping_level, period_key, source_partition,
+               input_fingerprint, schema_fingerprint,
+               analysis_contract_fingerprint, evidence_strength
         FROM {POSTGRES_TABLE}
         WHERE source_system = %s AND dataset = %s
+          AND is_active = TRUE
+          AND (mad IS NOT NULL OR jsd IS NOT NULL OR z_max IS NOT NULL
+               OR last_digit_test IS NOT NULL OR mad_2d IS NOT NULL
+               OR jsd_2d IS NOT NULL)
         {'AND group_id = ANY(%s)' if REQUESTED_GROUP_IDS else ''}
-        ORDER BY period_key DESC NULLS LAST
+        ORDER BY period_key DESC NULLS LAST, group_id, measure_name
         LIMIT %s OFFSET %s
     """
     query_parameters: list[object] = [POSTGRES_SOURCE_SYSTEM, POSTGRES_DATASET]
@@ -138,7 +153,10 @@ def load_postgres_transactions() -> Iterator[tuple[str, dict]]:
         )
     for row in rows:
         data = dict(row)
-        entity_id = str(data.get("group_id") or data.get("orgao_id") or "").strip()
+        entity_id = ":".join(
+            str(data.get(field) or "").strip()
+            for field in ("group_id", "orgao_id", "measure_name", "grouping_level", "period_key")
+        ).strip(":")
         if entity_id:
             yield entity_id, data
 
