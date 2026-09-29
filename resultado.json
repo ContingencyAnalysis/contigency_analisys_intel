@@ -1,0 +1,19 @@
+{
+  "web_search_model": "openai.gpt-5.6-terra",
+  "analysis_model": "openai.gpt-oss-20b-1:0",
+  "analysis": "**MOTIVOS POSSÍVEIS**  \n- **Rounding ou padronização de valores**: valores de contratos podem ser arredondados para dezenas, centenas ou milhares, gerando padrões de dígitos que divergem da distribuição de Benford.  \n- **Limites de preço ou cotas**: quando há teto de valor ou limites de preço estabelecidos por edital, a distribuição dos primeiros dígitos tende a ser mais uniforme.  \n- **Consolidação de múltiplas transações**: a agregação por fornecedor pode somar valores de contratos de diferentes naturezas, diluindo a distribuição esperada.  \n- **Mudanças de política de preços**: ajustes de preços de mercado ou de fornecedores em determinados períodos podem alterar a frequência dos dígitos iniciais.  \n\n**EVIDÊNCIAS ESTATÍSTICAS**  \n- **MAD (Mean Absolute Deviation)**: 0,012 > 0,006 → 2,0 × limiar.  \n- **JSD (Jensen‑Shannon Divergence)**: 0,021 > 0,010 → 2,1 × limiar.  \n- **Z‑max**: 3,2 > 2,5 → 1,28 × limiar.  \nEsses três indicadores excederam os limiares configurados, gerando o alerta. A métrica “sample_size” (380) confirma que a amostra é suficientemente grande para a análise.  \n\n**CONTEXTO LEGAL**  \n- **Lei nº 14.133/2021** (art. 11, II e III; art. 18, X; art. 23; art. 40, III; art. 117) orienta a Administração a implementar governança, gestão de riscos e controles internos, e a priorizar verificações com base em risco e materialidade.  \n- O alerta serve como **insumo de gestão de riscos e controle**, não como prova de irregularidade.  \n- **Controladoria‑Geral da União** recomenda que a priorização seja sistemática, documentada e proporcional ao risco.  \n- A **Lei de Benford** não é exigida pela Lei nº 14.133/2021; seu uso é apenas de apoio à seleção de itens para auditoria mais detalhada.  \n\n**LIMITAÇÕES**  \n- O registro contém apenas métricas agregadas por fornecedor e período; não há transação ou fornecedor individual.  \n- A divergência estatística não prova fraude, manipulação ou infração legal.  \n- O alerta indica necessidade de diligências adicionais (revisão de preços de mercado, justificativas contratuais, notas fiscais, fiscalização contratual).  \n- Se o registro não estivesse marcado como “eligible” ou “alerted”, não haveria sinal de priorização.  \n\nAssim, o alerta de Benford sinaliza um ponto de atenção para a equipe de auditoria, mas não constitui evidência de irregularidade por si só.",
+  "web_search_sources": [
+    {
+      "title": "L14133",
+      "url": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm"
+    },
+    {
+      "title": "Gestão de Riscos no Poder Executivo Federal — Controladoria-Geral da União",
+      "url": "https://www.gov.br/cgu/pt-br/assuntos/integridade-publica/gestao-de-riscos-no-poder-executivo-federal"
+    },
+    {
+      "title": "Fonte oficial consultada",
+      "url": "https://revista.tcu.gov.br/ojs/index.php/RTCU/article/download/63/327"
+    }
+  ]
+}

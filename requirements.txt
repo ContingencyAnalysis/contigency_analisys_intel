@@ -12,6 +12,7 @@ openpyxl
 xlrd
 psycopg2-binary
 accelerate
-openai
+openai[bedrock]
+python-dotenv
 fastapi
 uvicorn[standard]

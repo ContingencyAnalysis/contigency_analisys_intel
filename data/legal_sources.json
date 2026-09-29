@@ -1,0 +1,45 @@
+{
+  "version": "2026-09-28",
+  "sources": [
+    {
+      "source_id": "LEI-14133-ART-2-II",
+      "source_type": "lei",
+      "title": "Lei nº 14.133/2021 — art. 2º, inciso II",
+      "citation": "Lei nº 14.133, de 1º de abril de 2021, art. 2º, II",
+      "source_url": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm",
+      "retrieved_on": "2026-09-28",
+      "scope": "Aplicação da Lei a compras públicas, inclusive por encomenda.",
+      "content": "Art. 2º Esta Lei aplica-se a: (...) II - compra, inclusive por encomenda."
+    },
+    {
+      "source_id": "LEI-14133-ART-11",
+      "source_type": "lei",
+      "title": "Lei nº 14.133/2021 — art. 11",
+      "citation": "Lei nº 14.133, de 1º de abril de 2021, art. 11, incisos I a III e parágrafo único",
+      "source_url": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm",
+      "retrieved_on": "2026-09-28",
+      "scope": "Objetivos do processo licitatório e governança das contratações.",
+      "content": "Art. 11. O processo licitatório tem por objetivos: I - assegurar a seleção da proposta apta a gerar o resultado de contratação mais vantajoso para a Administração Pública; II - assegurar tratamento isonômico entre os licitantes, bem como a justa competição; III - evitar contratações com sobrepreço ou com preços manifestamente inexequíveis e superfaturamento na execução dos contratos. Parágrafo único. A alta administração do órgão ou entidade é responsável pela governança das contratações e deve implementar processos e estruturas, inclusive de gestão de riscos e controles internos, para avaliar, direcionar e monitorar os processos licitatórios e os respectivos contratos."
+    },
+    {
+      "source_id": "LEI-14133-ART-169",
+      "source_type": "lei",
+      "title": "Lei nº 14.133/2021 — art. 169",
+      "citation": "Lei nº 14.133, de 1º de abril de 2021, art. 169, caput e § 1º",
+      "source_url": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm",
+      "retrieved_on": "2026-09-28",
+      "scope": "Gestão de riscos, controle preventivo e linhas de defesa nas contratações públicas.",
+      "content": "Art. 169. As contratações públicas deverão submeter-se a práticas contínuas e permanentes de gestão de riscos e de controle preventivo, inclusive mediante adoção de recursos de tecnologia da informação, e, além de estar subordinadas ao controle social, sujeitar-se-ão a linhas de defesa. § 1º A implementação dessas práticas será responsabilidade da alta administração e levará em consideração custos e benefícios, relações íntegras e confiáveis e resultados vantajosos para a Administração."
+    },
+    {
+      "source_id": "TCU-BENFORD-AUDITORIA-2016",
+      "source_type": "metodologia_de_auditoria",
+      "title": "Aplicações da Lei de Benford à auditoria de obras públicas",
+      "citation": "Tribunal de Contas da União, notícia técnica de 31 de maio de 2016",
+      "source_url": "https://portal.tcu.gov.br/imprensa/noticias/aplicacoes-da-lei-de-benford-a-auditoria-de-obras-publicas",
+      "retrieved_on": "2026-09-28",
+      "scope": "Uso de desvios Benford como sinalizador para seleção de itens a auditar; não é norma jurídica nem prova de fraude.",
+      "content": "O TCU descreve a Lei Newcomb-Benford como ferramenta de mineração de dados para apoiar a seleção de itens para análise de preços. A notícia explica que a discrepância é examinada por testes estatísticos e que uma não conformidade pode ser tratada como red flag e indicar candidatos naturais para auditoria. O texto trata de triagem e auditoria de planilhas de obras públicas; não afirma que a não conformidade, isoladamente, prove manipulação ou irregularidade."
+    }
+  ]
+}
