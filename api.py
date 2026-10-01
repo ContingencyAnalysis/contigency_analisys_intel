@@ -103,8 +103,8 @@ def list_analyses(
         clauses.append("UPPER(nivel_anomalia) = UPPER(?)")
         parameters.append(nivel_anomalia)
     if emenda_id:
-        clauses.append("emenda_id = ?")
-        parameters.append(emenda_id)
+        clauses.append("(emenda_id = ? OR emenda_id LIKE ? OR CAST(id AS TEXT) = ?)")
+        parameters.extend([emenda_id, f"{emenda_id}:%", emenda_id])
 
     where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
     query = f"""
@@ -131,11 +131,23 @@ def get_analysis(emenda_id: str) -> Analysis:
             SELECT id, emenda_id, criado_em, nivel_anomalia, analysis,
                    documents_json, resultado_completo
             FROM AnaliseResultados
-            WHERE emenda_id = ? OR emenda_id LIKE ?
-            ORDER BY datetime(criado_em) DESC, id DESC
+            WHERE emenda_id = ? OR emenda_id LIKE ? OR CAST(id AS TEXT) = ?
+            ORDER BY
+                CASE
+                    WHEN emenda_id = ? THEN 0
+                    WHEN emenda_id LIKE ? THEN 1
+                    ELSE 2
+                END,
+                datetime(criado_em) DESC, id DESC
             LIMIT 1
             """,
-            (emenda_id, f"{emenda_id}:%"),
+            (
+                emenda_id,
+                f"{emenda_id}:%",
+                emenda_id,
+                emenda_id,
+                f"{emenda_id}:%",
+            ),
         ).fetchone()
     if row is None:
         raise HTTPException(status_code=404, detail="Análise não encontrada")

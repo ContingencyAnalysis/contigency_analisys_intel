@@ -164,10 +164,10 @@ def load_postgres_transactions() -> Iterator[tuple[str, dict]]:
         return
     for row in rows:
         data = dict(row)
-        entity_id = ":".join(
-            str(data.get(field) or "").strip()
-            for field in ("group_id", "orgao_id", "measure_name", "grouping_level", "period_key")
-        ).strip(":")
+        # The application identifies published entities by group_id (falling
+        # back to orgao_id). Keep the same identifier in AnaliseResultados so
+        # a dashboard selection can open the saved analysis directly.
+        entity_id = str(data.get("group_id") or data.get("orgao_id") or "").strip()
         if entity_id:
             yield entity_id, data
 
