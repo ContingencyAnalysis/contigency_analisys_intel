@@ -1,13 +1,10 @@
-#!/usr/bin/env python3
-"""Exercise Amazon Bedrock Web Search and Bedrock analysis, without Milvus."""
+"""Reusable Amazon Bedrock Web Search and analysis helpers."""
 
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import re
-import sys
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -38,28 +35,6 @@ REQUEST_TIMEOUT = int(
     configured_value("BEDROCK_TIMEOUT_SECONDS")
     or configured_value("OPENAI_TIMEOUT_SECONDS", "120")
 )
-
-# This synthetic example is deliberately labeled; it is not a real alert.
-SAMPLE_RECORD: dict[str, Any] = {
-    "source_system": "Compras",
-    "dataset": "compras",
-    "measure_name": "valor_total",
-    "grouping_level": "fornecedor",
-    "period_key": "2025",
-    "sample_size": 380,
-    "eligible": True,
-    "alerted": True,
-    "eligibility_reason": "amostra elegível; sinal acima do limiar configurado",
-    "mad": 0.012,
-    "mad_threshold": 0.006,
-    "mad_normalized": 2.0,
-    "jsd": 0.021,
-    "jsd_threshold": 0.010,
-    "jsd_normalized": 2.1,
-    "z_max": 3.2,
-    "z_threshold": 2.5,
-    "z_normalized": 1.28,
-}
 
 ANALYTICAL_FIELDS = {
     "source_system",
@@ -111,16 +86,6 @@ Regras:
 - Distinga evidência estatística de contexto jurídico e explicite limitações. Se eligible ou alerted não for true, diga que o registro não está marcado como alerta elegível.
 - Responda em português brasileiro, de forma concisa, usando as seções: MOTIVOS POSSÍVEIS, EVIDÊNCIAS ESTATÍSTICAS, CONTEXTO LEGAL, LIMITAÇÕES.
 """
-
-
-def load_record(path: str | None) -> dict[str, Any]:
-    if path is None:
-        return SAMPLE_RECORD.copy()
-
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    if not isinstance(payload, dict):
-        raise ValueError("O JSON da transação deve conter um objeto na raiz")
-    return payload
 
 
 def select_analytical_fields(record: dict[str, Any]) -> dict[str, Any]:
@@ -316,42 +281,6 @@ def run(record: dict[str, Any]) -> dict[str, Any]:
         "web_search_model": BEDROCK_WEB_SEARCH_MODEL,
         "analysis_model": BEDROCK_MODEL_ID,
         "analysis": analysis,
+        "web_research_summary": research,
         "web_search_sources": sources,
     }
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description=(
-            "Testa o Web Search do Amazon Bedrock e a análise no modelo Bedrock configurado, "
-            "sem consultar Milvus. Envia à AWS apenas os campos analíticos reconhecidos."
-        )
-    )
-    parser.add_argument(
-        "--transaction-json",
-        help="Arquivo JSON com uma linha de métricas; sem esta opção usa um exemplo sintético.",
-    )
-    parser.add_argument(
-        "--output",
-        help="Grava a resposta JSON completa neste caminho; por padrão imprime no terminal.",
-    )
-    args = parser.parse_args()
-
-    try:
-        record = select_analytical_fields(load_record(args.transaction_json))
-        result = run(record)
-    except (OSError, json.JSONDecodeError, ValueError, RuntimeError) as error:
-        print(f"Erro: {error}", file=sys.stderr)
-        return 1
-
-    rendered = json.dumps(result, ensure_ascii=False, indent=2)
-    if args.output:
-        Path(args.output).write_text(rendered + "\n", encoding="utf-8")
-        print(f"Resultado salvo em {args.output}")
-    else:
-        print(rendered)
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

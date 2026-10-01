@@ -12,6 +12,10 @@ from sentence_transformers import SentenceTransformer
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from dotenv import dotenv_values, load_dotenv
+from bedrock_web_search import (
+    run as run_bedrock_web_search,
+    select_analytical_fields,
+)
 
 load_dotenv()
 
@@ -240,9 +244,9 @@ def save_result_to_sqlite(conn, emenda_id, result):
         (
             emenda_id,
             nivel_anomalia,
-            json.dumps(result["documents"], ensure_ascii=False),
+            json.dumps(result["documents"], ensure_ascii=False, default=str),
             result["analysis"],
-            json.dumps(result, ensure_ascii=False),
+            json.dumps(result, ensure_ascii=False, default=str),
         )
     )
 
@@ -480,6 +484,20 @@ def extract_nivel_anomalia(answer: str) -> str:
 # =====================================================
 
 def run_single(emenda_id, transaction):
+    configured_source_system = (
+        POSTGRES_SOURCE_SYSTEM if DATA_SOURCE == "postgres" else ""
+    )
+    configured_dataset = POSTGRES_DATASET if DATA_SOURCE == "postgres" else ""
+    source_system = str(
+        transaction.get("source_system") or configured_source_system
+    ).strip().lower()
+    dataset = str(transaction.get("dataset") or configured_dataset).strip().lower()
+    if (
+        source_system == "compras"
+        and dataset in {"compras", "compras_publicas"}
+    ):
+        return run_compras_single(emenda_id, transaction)
+
     print(f"\n--- Processando Emenda: {emenda_id} ---")
 
     print("[1] Buscando documentos no Milvus...")
@@ -498,6 +516,43 @@ def run_single(emenda_id, transaction):
         "transaction": transaction,
         "documents": docs,
         "analysis": answer
+    }
+
+
+def run_compras_single(group_id, transaction):
+    """Explain real Compras metrics using Bedrock Web Search and official sources."""
+    print(f"\n--- Processando registro de Compras: {group_id} ---")
+    record = select_analytical_fields(transaction)
+
+    print("[1] Pesquisando fontes oficiais e gerando a justificativa...")
+    search_result = run_bedrock_web_search(record)
+    research = search_result["web_research_summary"]
+    sources = search_result["web_search_sources"]
+    print(f"    {len(sources)} fontes oficiais recuperadas.")
+
+    analysis = search_result["analysis"]
+
+    # Persist the web research and its citations in the existing documents_json
+    # field as well as keeping explicit fields in resultado_completo.
+    documents = [{
+        "content": research,
+        "metadata": {
+            "source": "Amazon Bedrock Web Search",
+            "official_sources": sources,
+        },
+    }]
+    print("\n" + "=" * 60)
+    print(analysis)
+    print("=" * 60)
+
+    return {
+        "transaction": transaction,
+        "documents": documents,
+        "analysis": analysis,
+        "web_search_model": search_result["web_search_model"],
+        "analysis_model": search_result["analysis_model"],
+        "web_research_summary": research,
+        "web_search_sources": sources,
     }
 
 # =====================================================
