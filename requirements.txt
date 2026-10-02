@@ -8,6 +8,7 @@ transformers
 pymilvus
 sqlalchemy
 pandas 
+pyarrow>=21.0.0
 openpyxl 
 xlrd
 psycopg2-binary

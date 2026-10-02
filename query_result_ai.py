@@ -3,8 +3,10 @@ import json
 import sqlite3
 import boto3
 import re
+import random
 import unicodedata
-from typing import Iterator
+from collections import Counter
+from typing import Any, Iterator
 from pathlib import Path
 
 from pymilvus import MilvusClient
@@ -58,6 +60,13 @@ POSTGRES_URL = (
 POSTGRES_TABLE = os.getenv("AGENT_POSTGRES_TABLE", "baseline_organization_metrics")
 POSTGRES_SOURCE_SYSTEM = os.getenv("AGENT_SOURCE_SYSTEM", "Compras")
 POSTGRES_DATASET = os.getenv("AGENT_POSTGRES_DATASET", "compras")
+COMPRAS_PARQUET_DIR = Path(
+    os.getenv(
+        "COMPRAS_PARQUET_DIR",
+        str(Path(__file__).resolve().parent / "transacao_compras"),
+    )
+)
+MAX_TRANSACTION_CONTEXT_ROWS = 20
 MILVUS_URI = os.getenv("MILVUS_URI", "http://localhost:19530")
 MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION", "rag_documents")
 TOP_K = int(os.getenv("TOP_K", "5"))
@@ -279,6 +288,233 @@ def _search_tokens(value):
         token for token in re.findall(r"[a-z0-9][a-z0-9_.-]{2,}", normalized)
         if token not in {"true", "false", "null", "none"}
     }
+
+
+def _transaction_group_column(grouping_level: Any) -> str | None:
+    level = unicodedata.normalize("NFKD", str(grouping_level or ""))
+    level = "".join(character for character in level if not unicodedata.combining(character))
+    level = re.sub(r"[^a-z0-9]+", "_", level.lower()).strip("_")
+    return {
+        "orgao_superior": "codigo_orgao_superior",
+        "unidade_gestora": "codigo_ug",
+        "orgao": "codigo_orgao",
+        "contratado": "codigo_contratado",
+        "fornecedor": "codigo_contratado",
+        "empresa": "codigo_contratado",
+        "favorecido": "codigo_contratado",
+    }.get(level)
+
+
+def _parse_transaction_period(period_key: Any) -> dict[str, int] | None:
+    value = str(period_key or "").strip()
+    match = re.fullmatch(
+        r"(?P<year>\d{4})(?:[-/](?P<month>\d{1,2})(?:[-/](?P<day>\d{1,2}))?|(?P<compact_month>\d{2}))?",
+        value,
+    )
+    if not match:
+        return None
+    parts = {"year": int(match.group("year"))}
+    month = match.group("month") or match.group("compact_month")
+    if month:
+        parts["month"] = int(month)
+        if not 1 <= parts["month"] <= 12:
+            return None
+    if match.group("day"):
+        parts["day"] = int(match.group("day"))
+        if not 1 <= parts["day"] <= 31:
+            return None
+    return parts
+
+
+def load_compras_transaction_context(record: dict[str, Any]) -> dict[str, Any]:
+    """Load a bounded, period- and group-matched view from local purchase Parquet."""
+    base_context = {
+        "source": COMPRAS_PARQUET_DIR.name,
+        "source_system": record.get("source_system"),
+        "dataset": record.get("dataset"),
+        "group_id": str(record.get("group_id") or record.get("orgao_id") or "").strip(),
+        "group_name": record.get("group_name"),
+        "grouping_level": record.get("grouping_level"),
+        "period_key": record.get("period_key"),
+        "measure_name": record.get("measure_name"),
+    }
+    if not COMPRAS_PARQUET_DIR.is_dir():
+        return {**base_context, "status": "dataset_missing", "matched_transaction_count": 0}
+    if not any(COMPRAS_PARQUET_DIR.rglob("*.parquet")):
+        return {**base_context, "status": "no_parquet_files", "matched_transaction_count": 0}
+
+    group_id = base_context["group_id"]
+    group_column = _transaction_group_column(record.get("grouping_level"))
+    if not group_id or not group_column:
+        return {
+            **base_context,
+            "status": "unsupported_grouping_level",
+            "matched_transaction_count": 0,
+        }
+
+    period = _parse_transaction_period(record.get("period_key"))
+    if period is None:
+        return {
+            **base_context,
+            "status": "unsupported_period_key",
+            "matched_transaction_count": 0,
+        }
+
+    try:
+        import pyarrow as pa
+        import pyarrow.compute as pc
+        import pyarrow.dataset as ds
+    except ImportError as error:
+        raise RuntimeError(
+            "Pacote pyarrow ausente para ler transacao_compras. "
+            "Instale as dependências de contigency_analisys_intel."
+        ) from error
+
+    dataset = ds.dataset(str(COMPRAS_PARQUET_DIR), format="parquet", partitioning="hive")
+    schema_names = set(dataset.schema.names)
+    if group_column not in schema_names or "data_assinatura_contrato" not in schema_names:
+        return {
+            **base_context,
+            "status": "incompatible_parquet_schema",
+            "matched_transaction_count": 0,
+            "required_columns": [group_column, "data_assinatura_contrato"],
+        }
+
+    date_field = ds.field("data_assinatura_contrato")
+    date_type = dataset.schema.field("data_assinatura_contrato").type
+    if pa.types.is_string(date_type):
+        date_field = pc.strptime(date_field, format="%Y-%m-%d", unit="s")
+    elif not (
+        pa.types.is_date(date_type)
+        or pa.types.is_timestamp(date_type)
+    ):
+        return {
+            **base_context,
+            "status": "unsupported_date_column",
+            "matched_transaction_count": 0,
+        }
+
+    filter_expression = ds.field(group_column) == group_id
+    filter_expression = filter_expression & (pc.year(date_field) == period["year"])
+    if "month" in period:
+        if "mes" in schema_names:
+            filter_expression = filter_expression & (ds.field("mes") == period["month"])
+        filter_expression = filter_expression & (pc.month(date_field) == period["month"])
+    if "day" in period:
+        filter_expression = filter_expression & (pc.day(date_field) == period["day"])
+
+    measure_name = str(record.get("measure_name") or "").strip()
+    measure_column = measure_name if measure_name in schema_names else None
+    if measure_column:
+        measure_type = dataset.schema.field(measure_column).type
+        if pa.types.is_integer(measure_type) or pa.types.is_floating(measure_type) or pa.types.is_decimal(measure_type):
+            filter_expression = filter_expression & (ds.field(measure_column) > 0)
+        else:
+            measure_column = None
+
+    context_columns = (
+        "numero_do_contrato",
+        "objeto",
+        "fundamento_legal",
+        "modalidade_compra",
+        "situacao_contrato",
+        "codigo_orgao_superior",
+        "nome_orgao_superior",
+        "codigo_orgao",
+        "nome_orgao",
+        "codigo_ug",
+        "nome_ug",
+        "data_assinatura_contrato",
+        "data_publicacao_dou",
+        "data_inicio_vigencia",
+        "data_fim_vigencia",
+        "codigo_contratado",
+        "nome_contratado",
+        "valor_inicial_compra",
+        "valor_final_compra",
+        "numero_licitacao",
+        "modalidade_compra_licitacao",
+        "mes",
+    )
+    columns = [column for column in context_columns if column in schema_names]
+    if group_column not in columns:
+        columns.append(group_column)
+    if measure_column and measure_column not in columns:
+        columns.append(measure_column)
+
+    scanner = dataset.scanner(
+        columns=columns,
+        filter=filter_expression,
+        batch_size=1024,
+    )
+    sample: list[dict[str, Any]] = []
+    randomizer = random.Random(
+        f"{group_id}|{record.get('period_key')}|{measure_name}"
+    )
+    matched_count = 0
+    amount_count = 0
+    amount_total = 0.0
+    amount_min: float | None = None
+    amount_max: float | None = None
+    contractor_codes: set[str] = set()
+    modality_counts: Counter[str] = Counter()
+
+    for batch in scanner.to_batches():
+        for row in batch.to_pylist():
+            matched_count += 1
+            if row.get("codigo_contratado"):
+                contractor_codes.add(str(row["codigo_contratado"]))
+            if row.get("modalidade_compra"):
+                modality_counts[str(row["modalidade_compra"])] += 1
+            if measure_column and row.get(measure_column) is not None:
+                amount = float(row[measure_column])
+                amount_count += 1
+                amount_total += amount
+                amount_min = amount if amount_min is None else min(amount_min, amount)
+                amount_max = amount if amount_max is None else max(amount_max, amount)
+
+            if row.get("objeto") is not None:
+                row["objeto"] = str(row["objeto"])[:600]
+            if row.get("fundamento_legal") is not None:
+                row["fundamento_legal"] = str(row["fundamento_legal"])[:400]
+
+            if len(sample) < MAX_TRANSACTION_CONTEXT_ROWS:
+                sample.append(row)
+            else:
+                replacement = randomizer.randrange(matched_count)
+                if replacement < MAX_TRANSACTION_CONTEXT_ROWS:
+                    sample[replacement] = row
+
+    status = "matched" if measure_column else "matched_context_only"
+    context = {
+        **base_context,
+        "status": status if matched_count else "no_matches",
+        "matched_transaction_count": matched_count,
+        "matching_rule": {
+            "group_column": group_column,
+            "date_column": "data_assinatura_contrato",
+            "measure_column": measure_column,
+            "period": period,
+            "positive_measure_only": bool(measure_column),
+        },
+        "distinct_contractor_count": len(contractor_codes),
+        "modality_counts": dict(modality_counts),
+        "sample_row_count": len(sample),
+        "sample_is_illustrative": True,
+        "sampled_transactions": sample,
+    }
+    if measure_column and amount_count:
+        context["measure_summary"] = {
+            "column": measure_column,
+            "count": amount_count,
+            "sum": amount_total,
+            "min": amount_min,
+            "max": amount_max,
+            "mean": amount_total / amount_count,
+        }
+    if matched_count > len(sample):
+        context["omitted_transaction_count"] = matched_count - len(sample)
+    return context
 
 
 def search_documents(transaction):
@@ -520,27 +756,44 @@ def run_single(emenda_id, transaction):
 
 
 def run_compras_single(group_id, transaction):
-    """Explain real Compras metrics using Bedrock Web Search and official sources."""
+    """Explain Compras metrics together with matching local contract records."""
     print(f"\n--- Processando registro de Compras: {group_id} ---")
     record = select_analytical_fields(transaction)
+    transaction_context = load_compras_transaction_context(transaction)
 
-    print("[1] Pesquisando fontes oficiais e gerando a justificativa...")
-    search_result = run_bedrock_web_search(record)
+    print(
+        "[1] Contexto transacional: "
+        f"{transaction_context['status']} "
+        f"({transaction_context.get('matched_transaction_count', 0)} registros encontrados)."
+    )
+    print("[2] Pesquisando fontes e gerando a justificativa...")
+    search_result = run_bedrock_web_search(record, transaction_context)
     research = search_result["web_research_summary"]
     sources = search_result["web_search_sources"]
-    print(f"    {len(sources)} fontes oficiais recuperadas.")
+    print(f"    {len(sources)} fontes recuperadas.")
 
     analysis = search_result["analysis"]
 
-    # Persist the web research and its citations in the existing documents_json
-    # field as well as keeping explicit fields in resultado_completo.
-    documents = [{
-        "content": research,
-        "metadata": {
-            "source": "Amazon Bedrock Web Search",
-            "official_sources": sources,
+    # Keep both transaction evidence and cited web research in documents_json.
+    documents = [
+        {
+            "content": json.dumps(transaction_context, ensure_ascii=False, default=str),
+            "metadata": {
+                "source": "transacao_compras Parquet",
+                "status": transaction_context["status"],
+                "matched_transaction_count": transaction_context.get(
+                    "matched_transaction_count", 0
+                ),
+            },
         },
-    }]
+        {
+            "content": research,
+            "metadata": {
+                "source": "Amazon Bedrock Web Search",
+                "web_search_sources": sources,
+            },
+        },
+    ]
     print("\n" + "=" * 60)
     print(analysis)
     print("=" * 60)
